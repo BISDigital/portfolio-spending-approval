@@ -2,8 +2,9 @@ extends layout
 
 
 mixin navbuttons
-  button(data-bind="visible: page() > 1, click: previouspage") Previous page
-  button(data-bind="visible: page() < 5, click: nextpage") Next page
+  div.navbuttons
+    button(data-bind="visible: page() > 1, click: previouspage") Previous page
+    button(data-bind="visible: page() < 5, click: nextpage") Next page
 
 mixin contact
   div.contact&attributes(attributes)
