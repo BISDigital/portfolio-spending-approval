@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  h1= title
+  form(method="post" enctype="multipart/form-data")
+    fieldset.page#selfassessment()
+      p The following #[strong(data-bind="text: selfAssessmentQuestions().length")] questions help you to self-assess the health of the program, and are tailored to its current phase.
+
+      div(data-bind="visible: $root.selfAssessmentIndex() == -1")
+        p Each question helps you rate your project according to one of the Cabinet Office's digital standards. 
+        p This self assessment processes should take about 30 minutes to complete.
+        button(data-bind="click: function() {selfAssessmentIndex(0)}") Get started 
+
+      div(data-bind="foreach: selfAssessmentQuestions")
+        div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index()")
+          p.question.selfassessment
+            span(data-bind="text:$index() + 1 ")
+            span :&ensp;
+            span(data-bind="text: question")
+            
+          label.green.grid-row(data-bind="click: $root.incrementSelfAssessment($index())")
+            input(type="radio" value="green" data-bind="attr: {name: id}, checked: answer")
+            div
+              strong GREEN:&ensp;
+              span(data-bind="text: green")
+          label.amber.grid-row(data-bind="visible: hasamber, click: $root.incrementSelfAssessment($index())")
+            input(type="radio" value="amber" data-bind="attr: {name: id}, checked: answer")
+            div
+              strong AMBER:&ensp;
+              span(data-bind="text: amber")
+          label.red.grid-row(data-bind="click: $root.incrementSelfAssessment($index())")
+            input(type="radio" value="red" data-bind="attr: {name: id}, checked: answer")
+            div
+              strong RED:&ensp;
+              span(data-bind="text: red")
+      a(href="#" data-bind="visible: selfAssessmentIndex() >= 1, click: decrementSelfAssessment") Go back
+
+  pre(data-bind="text: ko.toJSON($data, null, 2)")
+  
+  script.
+    window.selfassessment = !{selfassessment};
+
+  script(src="/javascripts/selfassessmentviewmodel.js")

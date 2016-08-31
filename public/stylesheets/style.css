@@ -1,0 +1,137 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  max-width: 640px;
+  margin:auto;
+}
+
+.question {
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+  line-height:1.25em;
+  font-weight:bold;
+  margin: 20px 0 10px;
+}
+
+.question.selfassessment {
+  margin-top: 50px;
+}
+
+.numerical {
+  text-align: right;
+}
+.discrepancy {
+  width:100%;
+  background-color: #FAB1B3 ;
+}
+.ok {
+  width:100%;
+  background-color: #B1FABA; 
+}
+
+.grid-row{
+  display: flex;  
+  justify-content: space-between;
+  width:100%;
+  margin-bottom:20px;
+}
+
+.grid-row>div, .grid-row>label, .grid-row>select {
+  flex-grow:1;
+  margin:0 20px;
+}
+.grid-row>input[type="radio"], .grid-row>input[type="checkbox"] {
+  flex-grow:0;
+}
+
+div.helper {
+  width:33%;
+  flex-grow:0;
+}
+
+.grid-row>div:first-child, .grid-row>label:first-child, .grid-row>select:first-child {
+  margin-left:0;
+}
+
+.grid-row>div:last-child, .grid-row>label:last-child, .grid-row>select:first-child {
+  margin-right:0;
+}
+
+a {
+  color: #00B7FF;
+}
+fieldset {
+	border:none;
+	padding:0;
+	margin:0;
+  width:100%;
+}
+label, input, select, textarea {
+	display:block;
+}
+
+input[type='radio'], input[type='checkbox'] {
+  display: inline-block;
+}
+
+input[type='text'], select, textarea{
+  width: 96%;
+  padding:10px 2%; 
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+select {
+  width:100%; /* Select elements don't have horizontal padding */
+}
+
+label {
+	margin-top: 20px;
+}
+
+label.red, label.amber, label.green {
+  margin-bottom: 10px;
+  padding: 10px 0;
+}
+
+label.red {background-color: #FAB1B3;}
+label.amber {background-color: #FAE7B1;}
+label.green {background-color: #B1FABA;}
+
+.selfassessmentwrapper {  
+    animation: slide-in 0.4s forwards;
+    -webkit-animation: slide-in 0.4s forwards;  
+}
+
+@keyframes slide-in {
+    0% {transform: translateX(100%); opacity: 0;}
+    100% { transform: translateX(0%); opacity: 1;}
+}
+
+@-webkit-keyframes slide-in {
+    0% {-webkit-transform: translateX(100%); opacity: 0;}
+    100% { -webkit-transform: translateX(0%); opacity: 1;}
+}
+
+pre {
+  margin-top: 10em;
+  border-top: 1px solid gainsboro;
+  display:none;
+}
+
+/*table stuff*/
+.table {display:table; width:100%; border-collapse:collapse;}
+.tbody {display:table-row-group;}
+.tr {display:table-row;}
+.colgroup {display:table-column-group;}
+.td {display:table-cell; vertical-align: middle}
+.td.input {border: 1px solid grey;}
+.td>input[type="text"], .td>textarea, .td>select {
+  width:96%;
+  margin:2%;
+  padding:0;
+  height: 36px;
+  border:none;
+  resize:none;
+}
+
+.td>label {
+  margin:0;
+}
