@@ -36,7 +36,7 @@ block content
               span(data-bind="text: red")
       div(data-bind="visible: selfAssessmentIndex() == selfAssessmentQuestions().length")
         p And you're done! Click the button below to submit your answers.
-        button(type="submit") Submit
+        button.primary(type="submit") Submit
       div.navbuttons(data-bind="visible: selfAssessmentIndex() >= 0")
         a(href="#" data-bind="click: decrementSelfAssessment") Go back
         span &emsp;

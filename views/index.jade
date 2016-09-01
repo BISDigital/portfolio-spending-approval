@@ -4,7 +4,7 @@ extends layout
 mixin navbuttons
   div.navbuttons
     button(data-bind="visible: d.page() > 1, click: previouspage") Previous page
-    button(data-bind="visible: d.page() < 5, click: nextpage") Next page
+    button.primary(data-bind="visible: d.page() < 5, click: nextpage") Next page
   a(href='#' data-bind="click: reset") Start over
 
 mixin contact
@@ -42,7 +42,7 @@ block content
 
         p.lede Your application progress will be stored throughout - you can return to this webiste at any point to complete your application.
         
-        button.startbutton(data-bind="click:nextpage") Start application
+        button.startbutton.primary(data-bind="click:nextpage") Start application
 
 
 
@@ -95,8 +95,9 @@ block content
                 a(href="#" data-bind="click: $root.removeUsecase") Remove
         div(data-bind="visible: d.usecases().length == 0") No usecases specified
         button(data-bind="click: addUsecase") Add a usecase
-        p.question What kind of research has been done to validate the above usecases?
-        textarea(data-bind="value: d.usecaseEvidence")
+        div(data-bind="visible: d.usecases().length > 0")
+          p.question What kind of research has been done to validate the above usecases?
+          textarea(data-bind="value: d.usecaseEvidence")
 
       p.question Do you have a Business Case document for this application?
       select(data-bind="options: businessCases, optionsText: 'label', optionsValue: 'id', value: d.businessCase")
@@ -266,9 +267,11 @@ block content
         label.question What is the origin of this deadline?
         textarea(data-bind="value: d.fasttrackReason")
 
-      +navbuttons
-      button(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit and launch self-assessment
+      button.primary(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit and launch self-assessment
 
+
+      +navbuttons
+      
   pre(data-bind="text: ko.toJSON($data, null, 2)")
   
   script(src="/javascripts/surveyviewmodel.js")

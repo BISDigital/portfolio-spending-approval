@@ -5,25 +5,33 @@ body {
 }
 
 button {
-  color: white;
   font-size: 19px;
   line-height: 1.25;
   cursor: pointer;
-  background-color: #00823b;
+  background-color: #C7C7C7;
   padding: .526315em 1.5em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
   -webkit-appearance: none;
-  -webkit-box-shadow: 0 2px 0 #003618;
-  -moz-box-shadow: 0 2px 0 #003618;
-  box-shadow: 0 2px 0 #003618;
+  -webkit-box-shadow: 0 2px 0 #2E2E2E;
+  -moz-box-shadow: 0 2px 0 #2E2E2E;
+  box-shadow: 0 2px 0 #2E2E2E;
   margin: 10px 10px 10px 0;
 }
 button:hover {
-  background-color: #00692f;
-  cursor: pointer;  
+  background-color: #BDBDBD;
+}
+button.primary {  
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+  color: white;
+  background-color: #00823b;
+}
+button.primary:hover {
+  background-color: #00692f; 
 }
 .navbuttons {
   margin-top:2em;
