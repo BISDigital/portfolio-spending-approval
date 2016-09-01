@@ -45,6 +45,41 @@
       return r;
     });
 
+    //save and restore
+    (function restore() {
+      var old = JSON.parse(Cookies.get('selfassessment') || "{}");
+      var qs = that.selfAssessmentQuestions();
+      console.log(old.answers);
+      for (var i in old.answers) {
+
+        var id = old.answers[i].q;
+        console.log(id);
+        var match = $.grep(qs, function(x) {return x.id == id })[0];
+        if (!match) continue;
+        console.log(match);
+        match.answer(old.answers[i].a);
+      }
+      if (old.idx) that.selfAssessmentIndex(old.idx);
+    })();
+
+    var storable = ko.computed(function() {
+      var res = [];
+      var qs = that.selfAssessmentQuestions();
+      for (var i in qs) {
+        res.push({q: qs[i].id, a: qs[i].answer() });
+      }
+      res.idx = that.selfAssessmentIndex();
+      return {idx: that.selfAssessmentIndex(), answers: res};
+    });
+    storable.subscribe(function(newVals) {
+      Cookies.set('selfassessment', JSON.stringify(newVals));
+    })
+
+    that.reset = function() {
+      Cookies.set('selfassessment', "{}");
+      window.location = window.location;
+    }
+
     // source: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;

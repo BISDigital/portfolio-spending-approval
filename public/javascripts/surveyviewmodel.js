@@ -51,15 +51,12 @@
     {id: 5, label: "£10m or more"}
   ];
 
-
-
   var costTypes = [
     {id: 1, name: "Technology capital expenditure"},
     {id: 2, name: "Technology operational expenditure"},
     {id: 3, name: "Non-technology operational expenditure"},
     {id: 4, name: "Transition or exit costs"}
   ];
-
 
   var financingTypes = [
     {id: 1, name: "Preapproved"},
@@ -69,27 +66,30 @@
 	var SurveyModel = function() {
 		var that = this;
 
-		that.applicationType = ko.observable("");    
-    that.name = ko.observable("");
-    that.mandates = ko.observable("");
-    that.existingId = ko.observable(0);
-		that.phase = ko.observable();
-    that.businessCase = ko.observable();
-    that.businessCaseDocument = ko.observable();
-    that.removeBusinessCaseDocument = function() {that.businessCaseDocument("");}
+    that.d = {}; // data
+    
+    that.d.applicant = ko.observable(contactTemplate());
+    that.d.applicationType = ko.observable("");    
+    that.d.name = ko.observable("");
+    that.d.mandates = ko.observable("");
+    that.d.existingId = ko.observable(0);
+		that.d.phase = ko.observable();
+    that.d.businessCase = ko.observable();
+    that.d.businessCaseDocument = ko.observable();
+    that.removeBusinessCaseDocument = function() {that.d.businessCaseDocument("");}
 
-    that.directorate = ko.observable();
-    that.sro = ko.observable(contactTemplate());
-    that.costBand = ko.observable(0);
-    that.technology = ko.observable("");
+    that.d.directorate = ko.observable();
+    that.d.sro = ko.observable(contactTemplate());
+    that.d.costBand = ko.observable(0);
+    that.d.technology = ko.observable("");
 
     that._selfAssessmentLink = ko.computed(function() {
       //todo: have an application guid from the backend.
-      return '/selfassessment?phase=' + (that.phase() || 1) + '&type=' + (that.applicationType() || 1); 
+      return '/selfassessment?phase=' + (that.d.phase() || 1) + '&type=' + (that.d.applicationType() || 1); 
     })
 
     that._assessmentLevel = ko.computed(function() {
-      var cost = that.costBand(), type = that.applicationType();
+      var cost = that.d.costBand(), type = that.d.applicationType();
       if (!cost || !type) return 0;
       if (cost == 5) return 3;
       if (type == 4 && cost >= 4
@@ -104,7 +104,7 @@
     })
 
     that._askAboutProjectPhase = ko.computed(function() {
-      return that.applicationType() == 2;
+      return that.d.applicationType() == 2;
     })
 
     that._askAboutTech = ko.computed(function() {
@@ -112,56 +112,54 @@
     })
 
     that._askAboutUseCase = ko.computed(function() {
-      return that.applicationType() > 1;
+      return that.d.applicationType() > 1;
     }) 
 
-		that.applicant = ko.observable(contactTemplate());
 		
-    that.usecases = ko.observableArray([]);
-    that.addUsecase = function() {that.usecases.push({user: ko.observable(""), direct: ko.observable(0), usecase: ko.observable("")})};
-    that.removeUsecase = function(x) {that.usecases.remove(x)};
+    that.d.usecases = ko.observableArray([]);
+    that.addUsecase = function() {that.d.usecases.push({user: ko.observable(""), direct: ko.observable(0), usecase: ko.observable("")})};
+    that.removeUsecase = function(x) {that.d.usecases.remove(x)};
 
-    that.usecaseEvidence = ko.observable("");
+    that.d.usecaseEvidence = ko.observable("");
 
-    that.costs = {};
+    that.d.costs = {};
     for (var i in costTypes) {
       var costName = costTypes[i].name;
-      that.costs[costName] = new CostModel();     
+      that.d.costs[costName] = new CostModel();     
     }
-    that.financing = {};
+    that.d.financing = {};
     for (var i in financingTypes) {
       var financingName = financingTypes[i].name;
-      that.financing[financingName] = new CostModel();
+      that.d.financing[financingName] = new CostModel();
     }
-    that.doNothing = new CostModel();
+    that.d.doNothing = new CostModel();
 
-    that.isMajorPortfolio = ko.observable();
-    that.purchasetech = ko.observable();
+    that.d.isMajorPortfolio = ko.observable();
+    that.d.purchasetech = ko.observable();
 
-    that.techCapCosts = ko.observableArray([]);
+    that.d.techCapCosts = ko.observableArray([]);
     that.addTechCapCost = function() {
       var x = new CostModel();
       x.name = ko.observable("");
-      that.techCapCosts.push(x);
+      that.d.techCapCosts.push(x);
     }
     that.removeTechCapCost = function(x) {
-      that.techCapCosts.remove(x);
+      that.d.techCapCosts.remove(x);
     }
     that.addTechCapCost();
 
-    that.govukexempt = ko.observable();
+    that.d.govukexempt = ko.observable();
 
-    that.noGovUkReason = ko.observable();
-    that.govukexemptionfile = ko.observable();
-    that.removegovukexemptionfile = function() {that.govukexemptionfile("");}
-    that.url = ko.observable();
-    that.assistedOutline = ko.observable();
-    that.authentication = ko.observable();
+    that.d.noGovUkReason = ko.observable();
+    that.d.govukexemptionfile = ko.observable();
+    that.removegovukexemptionfile = function() {that.d.govukexemptionfile("");}
+    that.d.url = ko.observable();
+    that.d.assistedOutline = ko.observable();
+    that.d.authentication = ko.observable();
 
-
-    that.needsFasttrack = ko.observable("");
-    that.fasttrackDeadline = ko.observable("");
-    that.fasttrackReason = ko.observable("");
+    that.d.needsFasttrack = ko.observable("");
+    that.d.fasttrackDeadline = ko.observable("");
+    that.d.fasttrackReason = ko.observable("");
 
     //Financials: totals
 
@@ -172,13 +170,13 @@
 
     for (var i in financialYears) {
       var id = financialYears[i].yearId;
-      that._costTotals[id] = makeCostTotal(that.costs, id);
-      that._financingTotals[id] = makeCostTotal(that.financing, id);
-      that._techCapCostTotals[id] = makeCostTotal(that.techCapCosts, id);
+      that._costTotals[id] = makeCostTotal(that.d.costs, id);
+      that._financingTotals[id] = makeCostTotal(that.d.financing, id);
+      that._techCapCostTotals[id] = makeCostTotal(that.d.techCapCosts, id);
     }
     for (var i  in financialYears) {
       var id = financialYears[i].yearId;
-      that._balanceTotals[id] = makeBalanceTotal(that.doNothing, that._costTotals, id);
+      that._balanceTotals[id] = makeBalanceTotal(that.d.doNothing, that._costTotals, id);
     }
 
     that._costGrandTotal = makeGrandTotal(that._costTotals);
@@ -200,24 +198,98 @@
     that.financingTypes = ko.observableArray(financingTypes);
 
     //paging
-    that.page = ko.observable(1);
+
+    that.d.page = ko.observable(1);
     that.nextpage = offsetPage(1);
     that.previouspage = offsetPage(-1);
 
     function offsetPage(offset) {
       return function() {
-        var target = that.page() + offset;
-        if (target == 4 && that.applicationType() >= 3) target += offset; //skip website questions for non-digital projects
+        var target = that.d.page() + offset;
+        if (target == 4 && that.d.applicationType() >= 3) target += offset; //skip website questions for non-digital projects
         window.scrollTo(0,0);
-        that.page(target);
+        that.d.page(target);
       }
     }
+
+    // save and restore
+    var arraysOfCostModels = ['costs', 'financing', 'techCapCosts'];
+    var costModels = ['doNothing'];
+    var people = ['applicant', 'sro'];
+    var restore = function() {
+      var old = JSON.parse(Cookies.get('application') || "{}");
+      console.log(old);
+      for (var x in old) {
+        if (old[x] == null || old[x] == undefined || !that.d[x]) {
+          continue;
+        }
+        if (arraysOfCostModels.indexOf(x) > -1) {
+          for (var y in old[x]) {
+            if (!(that.d[x][y])) continue;
+            that.d[x][y].set(old[x][y])
+          }
+        } else if (costModels.indexOf(x) > -1) {
+          that.d[x].set(old[x]); 
+        } else if (people.indexOf(x) > -1) {
+          that.d[x]().name(old[x].name);
+          that.d[x]().email(old[x].email);
+          that.d[x]().phone(old[x].phone);          
+        } else {
+          that.d[x](old[x]); 
+        }
+      }
+    };
+    restore();
+
+    that.reset = function() {
+      Cookies.set('application', '{}');
+      window.location = window.location;
+    }
+
+    that._state = ko.computed(function() {
+      var res = {};
+      for (var x in that.d) {
+          if (arraysOfCostModels.indexOf(x) > -1) {
+            res[x] = {};
+            for(var y in that.d[x]) {
+              if (!(that.d[x][y] instanceof CostModel)) continue;
+              res[x][y] = that.d[x][y].storable();
+            }
+          } else if (costModels.indexOf(x) > -1) {
+            res[x] = that.d[x].storable();
+          } else if (people.indexOf(x) > -1) {
+            res[x] = {name: that.d[x]().name(), email: that.d[x]().email(), phone: that.d[x]().phone()};
+          }
+          else {
+            res[x] = that.d[x]();  
+          }         
+      }
+      return res;
+    });
+    that._state.subscribe(function save(state) {
+        Cookies.set('application', JSON.stringify(state));
+    })
 	}
 
   function CostModel() {
     var self = this;
     for (var j in financialYears) {
       self[financialYears[j].yearId] = ko.observable();
+    }
+    self.storable = ko.computed(function() {
+      var res = {};
+      for (var l in financialYears) {
+        var id = financialYears[l].yearId;
+        res[id] = self[id]();
+      }
+      return res;
+    });
+    self.set = function (newVals) {
+      for (var l in financialYears) {
+        var id = financialYears[l].yearId;
+        if (!self[id] || !newVals[id]) continue;
+        self[id](newVals[id]);
+      }
     }
     this.total = ko.computed(function() {        
       var t = 0;

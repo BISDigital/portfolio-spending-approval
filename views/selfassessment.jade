@@ -1,10 +1,11 @@
 extends layout
 
 block content
-  h1= title
   form(method="post" enctype="multipart/form-data")
     fieldset.page#selfassessment()
-      p The following #[strong(data-bind="text: selfAssessmentQuestions().length")] questions help you to self-assess the health of the program, and are tailored to its current phase.
+      p.lede The following #[strong(data-bind="text: selfAssessmentQuestions().length")] questions help you to self-assess the health of the program, and are tailored to its current phase.
+
+      p.lede Your progress will be stored throughout - you can return to this page at any time to complete the self-assessment.
 
       div(data-bind="visible: $root.selfAssessmentIndex() == -1")
         p Each question helps you rate your project according to one of the Cabinet Office's digital standards. 
@@ -33,7 +34,10 @@ block content
             div
               strong RED:&ensp;
               span(data-bind="text: red")
-      a(href="#" data-bind="visible: selfAssessmentIndex() >= 1, click: decrementSelfAssessment") Go back
+      div(data-bind="visible: selfAssessmentIndex() >= 0")
+        a(href="#" data-bind="click: decrementSelfAssessment") Go back
+        span &emsp;
+        a(href="#" data-bind="click: reset") Start over
 
   pre(data-bind="text: ko.toJSON($data, null, 2)")
   

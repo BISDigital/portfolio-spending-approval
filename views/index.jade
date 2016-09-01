@@ -3,8 +3,9 @@ extends layout
 
 mixin navbuttons
   div.navbuttons
-    button(data-bind="visible: page() > 1, click: previouspage") Previous page
-    button(data-bind="visible: page() < 5, click: nextpage") Next page
+    button(data-bind="visible: d.page() > 1, click: previouspage") Previous page
+    button(data-bind="visible: d.page() < 5, click: nextpage") Next page
+  a(href='#' data-bind="click: reset") Start over
 
 mixin contact
   div.contact&attributes(attributes)
@@ -19,67 +20,68 @@ mixin contact
     block
 
 block content
-  h1= title
   form(method="post" enctype="multipart/form-data")
-    fieldset.page#qualifiers(data-bind="visible: page() == 1")
+    fieldset.page#qualifiers(data-bind="visible: d.page() == 1")
       p.question Who are you?
-      +contact(data-bind="with: applicant")
+      +contact(data-bind="with: d.applicant")
 
       p.question What would you like to do?
       div(data-bind="foreach: applicationTypeOptions")
         label.mode.grid-row
-          input(type="radio" data-bind="value: id, checked: $root.applicationType")
+          input(type="radio" data-bind="value: id, checked: $root.d.applicationType")
           div(data-bind="text: name")
 
       label.question(for="q3") How much money do you expect the program to require, in total?
-      select(data-bind="options: availableCostBands, optionsText: 'label', optionsValue: 'id', value: costBand")
+      select(data-bind="options: availableCostBands, optionsText: 'label', optionsValue: 'id', value: d.costBand")
 
       //- ew!
       div(data-bind="visible: !!_assessmentLevel()")
         p(data-bind="visible: _assessmentLevel() == 3") This application will be reviewed by the BEIS Portfolio team and the GDS, and signed off by the Cabinet Office. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital, technical and commercial standards.
         p(data-bind="visible: _assessmentLevel() == 2") This application will be reviewed by the BEIS Portfolio team, and signed off by the GDS. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital and technical standards.
         p(data-bind="visible: _assessmentLevel() == 1") This application will be reviewed and signed off by the BEIS Portfolio team. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital standards.
+
+        p.lede Your application progress will be stored throughout - you can return to this webiste at any point to complete your application.
         
         button.startbutton(data-bind="click:nextpage") Start application
 
 
 
 
-    fieldset.page#general(data-bind="visible: page() == 2")
+    fieldset.page#general(data-bind="visible: d.page() == 2")
     
       div(data-bind="visible: _askAboutProjectPhase")
         label.question Choose your project
-        select(data-bind="options: existingProjects, optionsText: 'name', optionsValue: 'id', value: existingId")
+        select(data-bind="options: existingProjects, optionsText: 'name', optionsValue: 'id', value: d.existingId")
         label.question Which project phase are you seeking approval for?
-        select(data-bind="options: digitalProjectPhases, optionsText: 'name', optionsValue: 'id', value: phase")
+        select(data-bind="options: digitalProjectPhases, optionsText: 'name', optionsValue: 'id', value: d.phase")
       
         
-      div(data-bind="visible: applicationType()==1")
+      div(data-bind="visible: d.applicationType()==1")
         label.question(for="q2") What is the name of the new program?
-        input(name="q2" type="text" data-bind="value: name")
+        input(name="q2" type="text" data-bind="value: d.name")
         
         label.question(for="q3") Which ministerial or legislative mandates, if any, are set against this program?
-        textarea(name="q3" data-bind="value: mandates")
+        textarea(name="q3" data-bind="value: d.mandates")
         
         label.question Who is the Senior Responsible Officer (SRO) of this program?
-        +contact()(data-bind="with: sro")
+        +contact()(data-bind="with: d.sro")
 
         label.question Which directorate does this program belong to?
-        select(data-bind="options: directorates, optionsText: 'name', optionsValue: 'id', value: directorate")
+        select(data-bind="options: directorates, optionsText: 'name', optionsValue: 'id', value: d.directorate")
         
       div(data-bind="visible: _askAboutTech")
         label.question What technology, new or existing, are you proposing to use?  
-        textarea(data-bind="value: technology")
+        textarea(data-bind="value: d.technology")
 
       div(data-bind="visible: _askAboutUseCase")
         p.question Who will benefit from this program, and how?
         div.table
-          div.tr(data-bind="visible: usecases().length > 0")
+          div.tr(data-bind="visible: d.usecases().length > 0")
             div.td Beneficiary
             div.td Direct user?
             div.td They will be able to&hellip;
             div.td
-          div.tbody(data-bind="foreach: usecases")
+          div.tbody(data-bind="foreach: d.usecases")
             div.tr
               div.td.input
                 input(type="text" data-bind="value: user")
@@ -91,26 +93,26 @@ block content
                 textarea(data-bind="value: usecase")
               div.td
                 a(href="#" data-bind="click: $root.removeUsecase") Remove
-        div(data-bind="visible: usecases().length == 0") No usecases specified
+        div(data-bind="visible: d.usecases().length == 0") No usecases specified
         button(data-bind="click: addUsecase") Add a usecase
         p.question What kind of research has been done to validate the above usecases?
-        textarea(data-bind="value: usecaseEvidence")
+        textarea(data-bind="value: d.usecaseEvidence")
 
       p.question Do you have a Business Case document for this application?
-      select(data-bind="options: businessCases, optionsText: 'label', optionsValue: 'id', value: businessCase")
+      select(data-bind="options: businessCases, optionsText: 'label', optionsValue: 'id', value: d.businessCase")
 
-      div(data-bind="visible: !!businessCase()")
+      div(data-bind="visible: !!d.businessCase()")
         p.question Please attach the Business Case document
         div.grid-row
           div
-            input(type="file" data-bind="value: businessCaseDocument")
+            input(type="file" data-bind="value: d.businessCaseDocument")
           div
-            a(href="#" data-bind="visible: !!businessCaseDocument(), click: removeBusinessCaseDocument") Remove
+            a(href="#" data-bind="visible: !!d.businessCaseDocument(), click: removeBusinessCaseDocument") Remove
 
       +navbuttons
 
 
-    fieldset.page#financials(data-bind="visible: page() == 3")
+    fieldset.page#financials(data-bind="visible: d.page() == 3")
       p.question How are costs distributed?
       div.table
         div.tr
@@ -124,9 +126,9 @@ block content
             div.td(data-bind="text: name")
             // ko foreach: $root.financialYears
             div.td.input
-              input.numerical(type="text" data-bind="value: $root.costs[$parent.name][yearId]")
+              input.numerical(type="text" data-bind="value: $root.d.costs[$parent.name][yearId]")
             // /ko              
-            div.td.numerical(data-bind="text: $root.costs[name].total")
+            div.td.numerical(data-bind="text: $root.d.costs[name].total")
         div.tr
           div.td Total
           // ko foreach: financialYears
@@ -139,9 +141,9 @@ block content
             div.td(data-bind="text:name")
             // ko foreach: $root.financialYears
             div.td.input
-              input.numerical(type="text" data-bind="value: $root.financing[$parent.name][yearId]")
+              input.numerical(type="text" data-bind="value: $root.d.financing[$parent.name][yearId]")
             // /ko
-            div.td.numerical(data-bind="text: $root.financing[name].total")
+            div.td.numerical(data-bind="text: $root.d.financing[name].total")
         div.tr
           div.td Total financing
           // ko foreach: financialYears
@@ -153,27 +155,27 @@ block content
           div.td Cost of the "do nothing" approach
           // ko foreach: financialYears
           div.td.input
-            input.numerical(type="text" data-bind="value: $root.doNothing[yearId]")
+            input.numerical(type="text" data-bind="value: $root.d.doNothing[yearId]")
           // /ko
-          div.td.numerical(data-bind="text: $root.doNothing.total")
+          div.td.numerical(data-bind="text: $root.d.doNothing.total")
         div.tr
           div.td Return on investment
           // ko foreach: financialYears
           div.td.numerical(data-bind="text: $root._balanceTotals[yearId]")
           // /ko
           div.td.numerical(data-bind="text: _balanceGrandTotal")
-      div(data-bind="visible: costs['Technology capital expenditure'].total() > 0")
+      div(data-bind="visible: d.costs['Technology capital expenditure'].total() > 0")
         p.question What are the components of the technology capital expenditure?
         p.sub Costs may include hosting, development, etc.
-        div(data-bind="visible: techCapCosts().length == 0") No expenditures specified
+        div(data-bind="visible: d.techCapCosts().length == 0") No expenditures specified
         div.table
-          div.tr(data-bind="visible: techCapCosts().length > 0")
+          div.tr(data-bind="visible: d.techCapCosts().length > 0")
             div.td Nature of cost
             // ko foreach: financialYears
             div.td(data-bind="text:yearLabel") 
             // /ko
             div.td Total
-          div.tbody(data-bind="foreach: techCapCosts")
+          div.tbody(data-bind="foreach: d.techCapCosts")
             div.tr
               div.td.input
                 input(type="text" data-bind="value: name")
@@ -183,89 +185,89 @@ block content
               // /ko
               div.td.numerical(data-bind="text: total")
               div.td
-                a(href="#" data-bind="click: $root.removeTechCapCost, visible: $root.techCapCosts().length > 1") Remove
+                a(href="#" data-bind="click: $root.removeTechCapCost, visible: $root.d.techCapCosts().length > 1") Remove
           div.tr
             div.td Total
             // ko foreach: financialYears 
             div.td.numerical
-              div(data-bind="text: $root._techCapCostTotals[yearId], attr: {class: $root._techCapCostTotals[yearId]() == ($root.costs['Technology capital expenditure'][yearId]() || 0) ? 'ok' : 'discrepancy'}")
+              div(data-bind="text: $root._techCapCostTotals[yearId], attr: {class: $root._techCapCostTotals[yearId]() == ($root.d.costs['Technology capital expenditure'][yearId]() || 0) ? 'ok' : 'discrepancy'}")
             // /ko
             div.td.numerical(data-bind="text: _techCapCostGrandTotal")
           div.tr
             div.td Total technology capital expenditure
             // ko foreach: financialYears 
             div.td.numerical
-              div(data-bind="text: $root.costs['Technology capital expenditure'][yearId]() || 0, attr: {class: $root._techCapCostTotals[yearId]() == ($root.costs['Technology capital expenditure'][yearId]() || 0) ? 'ok' : 'discrepancy'}")
+              div(data-bind="text: $root.d.costs['Technology capital expenditure'][yearId]() || 0, attr: {class: $root._techCapCostTotals[yearId]() == ($root.d.costs['Technology capital expenditure'][yearId]() || 0) ? 'ok' : 'discrepancy'}")
             // /ko
-            div.td.numerical(data-bind="text: costs['Technology capital expenditure'].total")
+            div.td.numerical(data-bind="text: d.costs['Technology capital expenditure'].total")
         button(data-bind="click: addTechCapCost") Add an expenditure
 
       p.question How is the technology being purchased?
       p.sub Please provide the details of all the procurements being run and the procurement routes.
-      textarea(data-bind="value:purchasetech")
+      textarea(data-bind="value: d.purchasetech")
 
       p.question Is this spend associated with a project/programme included on the Government Major Project Portfolio?
       label.grid-row
-        input(type="radio", name="isMajorPortfolio", value="1", data-bind="checked: isMajorPortfolio")
+        input(type="radio", name="isMajorPortfolio", value="1", data-bind="checked: d.isMajorPortfolio")
         div Yes   
       label.grid-row
-        input(type="radio", name="isMajorPortfolio", value="0", data-bind="checked: isMajorPortfolio")
+        input(type="radio", name="isMajorPortfolio", value="0", data-bind="checked: d.isMajorPortfolio")
         div No
       
       +navbuttons
 
-    fieldset.page#websiteinfo(data-bind="visible: page() == 4")
+    fieldset.page#websiteinfo(data-bind="visible: d.page() == 4")
             
       p.question What domain name (URL) do you propose using for the digital service?
-      input(type="text" data-bind="value: url")
+      input(type="text" data-bind="value: d.url")
 
       p.question Which users of the digital service, if any, will need to be identified and/or authenticated by the service? 
       p.sub Please refer to the #[a(href="https://www.gov.uk/service-manual/identity-assurance") Service Manual guidance] to ensure that the proposed approach is compliant. If there has already been contact with the GDS Identity Assurance Programme (IDAP) team please give brief details.
-      input(type="text" data-bind="value: authentication")
+      input(type="text" data-bind="value: d.authentication")
 
       p.question What measures are planned to support assisted digital users?
       p.sub The proposal needs to comply with the #[a(href="https://www.gov.uk/service-manual/assisted-digital/index.html") Assisted Digital Guidance] from the Service Manual. This may outline consideration on delivering the services through the Front Office Counter Services framework. Please ensure costs are covered in the high-level finances.
-      textarea(data-bind="value: assistedOutline")
+      textarea(data-bind="value: d.assistedOutline")
 
       p.question Is this digital service going to be part of GOV.UK? 
       label.grid-row
-        input(type="radio" name="newwebsite" value="0" data-bind="checked:govukexempt")
+        input(type="radio" name="newwebsite" value="0" data-bind="checked: d.govukexempt")
         div Yes
       label.grid-row
-        input(type="radio" name="newwebsite" value="1" data-bind="checked:govukexempt")
+        input(type="radio" name="newwebsite" value="1" data-bind="checked: d.govukexempt")
         div No
 
-      div#website-nogovuk(data-bind="visible: govukexempt() == 1")
+      div#website-nogovuk(data-bind="visible: d.govukexempt() == 1")
         p.question Why is this site exempt from GOV.UK?
-        textarea(data-bind="value: noGovUkReason")
+        textarea(data-bind="value: d.noGovUkReason")
 
         p Please add any supporting emails confirming the grounds of exemption
         div.grid-row
           div
-            input(type="file" data-bind="value: govukexemptionfile")
+            input(type="file" data-bind="value: d.govukexemptionfile")
           div
-            a(href="#" data-bind="visible: !!govukexemptionfile(), click: removegovukexemptionfile") Remove
+            a(href="#" data-bind="visible: !!d.govukexemptionfile(), click: removegovukexemptionfile") Remove
        
 
       +navbuttons
 
-    fieldset.page#submit(data-bind="visible: page() == 5")
+    fieldset.page#submit(data-bind="visible: d.page() == 5")
       label.question Once your application is submitted, the approval process takes #[span(data-bind="text: _daysForAssessment")] days to complete.
-      label
-        input(type="radio" name="fasttrack" value="" data-bind="checked: needsFasttrack")
-        span That's ok
-      label
-        input(type="radio" name="fasttrack" value="true" data-bind="checked: needsFasttrack")
-        span I need an answer sooner - there is a deadline
+      label.grid-row
+        input(type="radio" name="fasttrack" value="" data-bind="checked: d.needsFasttrack")
+        div That's ok
+      label.grid-row
+        input(type="radio" name="fasttrack" value="true" data-bind="checked: d.needsFasttrack")
+        div I need an answer sooner - there is a deadline
 
-      div(data-bind="visible: needsFasttrack()")
+      div(data-bind="visible: d.needsFasttrack()")
         label.question When do you need an answer by?
-        input(type="text" data-bind="value: fasttrackDeadline")
-        label.question What is the cause of this deadline?
-        textarea(data-bind="value: fasttrackReason")
+        input(type="text" data-bind="value: d.fasttrackDeadline")
+        label.question What is the origin of this deadline?
+        textarea(data-bind="value: d.fasttrackReason")
 
       +navbuttons
-      button(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit
+      button(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit and launch self-assessment
 
   pre(data-bind="text: ko.toJSON($data, null, 2)")
   

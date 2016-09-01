@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/selfassessment', function (req,res,next) {
-  res.render('selfassessment', {title: 'Spending Approval', selfassessment: req.app.locals.SELFASSESSMENT});
+  res.render('selfassessment', {title: 'Spending Approval self-assessment', selfassessment: req.app.locals.SELFASSESSMENT});
 });
 
 router.get('/table', function(req,res,next) {
