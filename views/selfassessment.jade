@@ -5,7 +5,7 @@ block content
     fieldset.page#selfassessment()
       p.lede The following #[strong(data-bind="text: selfAssessmentQuestions().length")] questions help you to self-assess the health of the program, and are tailored to its current phase.
 
-      p.lede Your progress will be stored throughout - you can return to this page at any time to complete the self-assessment.
+      p.lede Your progress will be stored throughout &ndash; you can return to this page at any time to complete the self-assessment.
 
       div(data-bind="visible: $root.selfAssessmentIndex() == -1")
         p Each question helps you rate your project according to one of the Cabinet Office's digital standards. 
@@ -34,7 +34,10 @@ block content
             div
               strong RED:&ensp;
               span(data-bind="text: red")
-      div(data-bind="visible: selfAssessmentIndex() >= 0")
+      div(data-bind="visible: selfAssessmentIndex() == selfAssessmentQuestions().length")
+        p And you're done! Click the button below to submit your answers.
+        button(type="submit") Submit
+      div.navbuttons(data-bind="visible: selfAssessmentIndex() >= 0")
         a(href="#" data-bind="click: decrementSelfAssessment") Go back
         span &emsp;
         a(href="#" data-bind="click: reset") Start over
