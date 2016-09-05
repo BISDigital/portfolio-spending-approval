@@ -88,6 +88,9 @@
       return '/selfassessment?phase=' + (that.d.phase() || 1) + '&type=' + (that.d.applicationType() || 1); 
     })
 
+    //nb!
+    Cookies.set('selfassessment', "");
+
     that._assessmentLevel = ko.computed(function() {
       var cost = that.d.costBand(), type = that.d.applicationType();
       if (!cost || !type) return 0;
