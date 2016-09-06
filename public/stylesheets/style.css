@@ -72,6 +72,12 @@ button.primary:hover {
 .lede {
   font-size: 19px;
 }
+#selfassessment
+{
+  width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+}
 .question.selfassessment {
   margin-top: 50px;
 }
@@ -148,7 +154,8 @@ label {
 
 label.red, label.amber, label.green {
   margin-bottom: 10px;
-  padding: 10px 10px 10px 5px;
+  padding: 10px 2% 10px 1%;
+  width:96%;
 }
 
 label.red:focus, label.amber:focus, label.green:focus {
