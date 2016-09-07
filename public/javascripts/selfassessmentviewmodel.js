@@ -6,10 +6,32 @@
 		var that = this;
 
     that.selfAssessmentIndex = ko.observable(-1);
-    that.incrementSelfAssessment = function(currentIndex) {
-      return function() {setTimeout(function() {that.selfAssessmentIndex(currentIndex + 1);}, 200); return true;}
+    that.gotoNextUnansweredQuestion = function() {
+      var sa = that.selfAssessmentQuestions();
+      var nextIndex = sa.length;
+      for (var i in sa) 
+        if (!sa[i].answer()) {
+          nextIndex = i;
+          break;
+        }
+      setTimeout(function() {that.selfAssessmentIndex(nextIndex);}, 200); 
+      return true;
     }
     that.decrementSelfAssessment = function() {that.selfAssessmentIndex(that.selfAssessmentIndex() -1)}
+
+    that.clearAnswer = function(element) {
+      element.answer("");
+      that.gotoNextUnansweredQuestion();
+      that.toggleAnswers(false);
+    }
+
+    that.showAnswers = ko.observable(false);
+    that.toggleAnswers = function(newVal)  {
+      if (newVal !== false && newVal !== true) newVal = !that.showAnswers();
+      that.showAnswers(newVal);
+    }
+
+    
 
 		that.applicationType = ko.observable(parseInt(getParameterByName("type")) || 1);    
     that.phase = ko.observable(parseInt(getParameterByName("phase")) || 1);
@@ -18,8 +40,11 @@
     var allSelfAssessment = ko.observableArray(selfAssessment);
     that.selfAssessmentQuestions = ko.computed(function() {
       var sa = allSelfAssessment();
-      var phase = that.applicationType() == 1 ? 1
-        : (that.phase() || 1);
+      var type = that.applicationType();
+      var phase = type == 1 ? 1
+        : type == 2 ? (that.phase() || 1)
+        : type == 3 ? 4
+        : -1;
 
       var phasename = 
           phase == 1 ? "discovery"
@@ -43,6 +68,14 @@
         });
       }
       return r;
+    });
+
+    that._answeredQuestions = ko.computed(function() {
+      var sa = that.selfAssessmentQuestions();
+      var res = 0;
+      for (var i in sa)
+        if(!!sa[i].answer()) res++;
+      return res;
     });
 
     //save and restore

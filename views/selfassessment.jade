@@ -7,29 +7,40 @@ block content
 
       p.lede Your progress will be stored throughout &ndash; you can return to this page at any time to complete the self-assessment.
 
+      div(data-bind="visible:_answeredQuestions() > 0")
+        p You have answered #[strong(data-bind="text: _answeredQuestions")] questions. #[a(href="#" data-bind="click: toggleAnswers, text: showAnswers() ? 'Hide answers': 'Show answers'")]
+      div(data-bind="foreach: selfAssessmentQuestions, visible: showAnswers")
+        div(data-bind="if: !!answer()")
+          p.question(data-bind="text:question")
+          div(data-bind="attr: {class: answer}")
+            span(data-bind="text:$data[answer()]") 
+            span &ensp;
+            a(href="#" data-bind="click: $root.clearAnswer") Change
+
+
       div(data-bind="visible: $root.selfAssessmentIndex() == -1")
         p Each question helps you rate your project according to one of the Cabinet Office's digital standards. 
         p This self assessment processes should take about 30 minutes to complete.
         button.primary(data-bind="click: function() {selfAssessmentIndex(0)}") Get started 
 
-      div(data-bind="foreach: selfAssessmentQuestions")
+      div#questioncards(data-bind="foreach: selfAssessmentQuestions")
         div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index()")
           p.question.selfassessment
             span(data-bind="text:$index() + 1")
             span :&ensp;
             span(data-bind="text: question")
             
-          label.green.grid-row(data-bind="click: $root.incrementSelfAssessment($index())")
+          label.green.grid-row(data-bind="click: $root.gotoNextUnansweredQuestion")
             input(type="radio" value="green" data-bind="attr: {name: id}, checked: answer")
             div
               strong GREEN:&ensp;
               span(data-bind="text: green")
-          label.amber.grid-row(data-bind="visible: hasamber, click: $root.incrementSelfAssessment($index())")
+          label.amber.grid-row(data-bind="visible: hasamber, click: $root.gotoNextUnansweredQuestion")
             input(type="radio" value="amber" data-bind="attr: {name: id}, checked: answer")
             div
               strong AMBER:&ensp;
               span(data-bind="text: amber")
-          label.red.grid-row(data-bind="click: $root.incrementSelfAssessment($index())")
+          label.red.grid-row(data-bind="click: $root.gotoNextUnansweredQuestion")
             input(type="radio" value="red" data-bind="attr: {name: id}, checked: answer")
             div
               strong RED:&ensp;

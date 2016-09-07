@@ -22,6 +22,7 @@
   ];
 
   var existingProjects = [
+    {id: null, name: "Please select..."},
     {id: 1, name: "Project 1"},
     {id: 2, name: "Project 2"},
     {id: 3, name: "Project 3"}
@@ -62,6 +63,7 @@
     {id: 1, name: "Preapproved"},
     {id: 2, name: "Requested now"},
   ];
+
 
 	var SurveyModel = function() {
 		var that = this;
@@ -160,9 +162,7 @@
     that.d.assistedOutline = ko.observable();
     that.d.authentication = ko.observable();
 
-    that.d.needsFasttrack = ko.observable("");
-    that.d.fasttrackDeadline = ko.observable("");
-    that.d.fasttrackReason = ko.observable("");
+    that.d.deadlines = ko.observable("");
 
     //Financials: totals
 
@@ -199,7 +199,7 @@
     that.financialYears = ko.observableArray(financialYears);
     that.costTypes = ko.observableArray(costTypes);
     that.financingTypes = ko.observableArray(financingTypes);
-
+    
     //paging
 
     that.d.page = ko.observable(1);
@@ -208,6 +208,9 @@
 
     function offsetPage(offset) {
       return function() {
+        if (!checkAllVisibleValid()) {
+          return;
+        }
         var target = that.d.page() + offset;
         if (target == 4 && that.d.applicationType() >= 3) target += offset; //skip website questions for non-digital projects
         window.scrollTo(0,0);
@@ -331,6 +334,43 @@
       return t; 
     })   
   }
+
+  //validation 
+  function checkAllVisibleValid() {
+    var allOk = true;      
+    $(".required input[type='text']:visible, .required textarea:visible, .required select:visible").each(function(i, e) {
+      if(!$(e).val()) {
+        $(e).addClass("invalid");
+        allOk = false;
+      }
+    });
+
+    $(".required:visible").each(function(i,e) {
+      if($("input[type='radio']", e).length > 0 && $("input[type='radio']:checked", e).length == 0) {
+        $(e).addClass("invalid");
+        allOk = false;
+      }
+    });
+
+    if($(".discrepancy:visible").length > 0) {
+      allOk = false;
+    }
+
+    if (!allOk) {
+      $('html, body').animate({
+          scrollTop: $(".invalid:visible, .discrepancy:visible").offset().top - 50
+      }, 600);
+    }
+    return allOk;
+  }
+
+  $(document).on("change", ".invalid", function() {
+    $(this).removeClass("invalid");
+  });
+
+  $(document).on("click", ".invalid input[type='radio']", function() {
+    $(this).ancestor(".invalid").removeClass("invalid");
+  });
   
 
 	ko.applyBindings(new SurveyModel());

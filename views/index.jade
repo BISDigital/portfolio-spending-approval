@@ -1,6 +1,5 @@
 extends layout
 
-
 mixin navbuttons
   div.navbuttons
     button(data-bind="visible: d.page() > 1, click: previouspage") Previous page
@@ -10,13 +9,16 @@ mixin navbuttons
 mixin contact
   div.contact&attributes(attributes)
     div.grid-row
-      label Full Name
-        input.full-name(type="text" data-bind="value: name")
+      div.required
+        label.required Full Name
+        input(type="text" data-bind="value: name")
     div.grid-row
-      label Email
-        input.email(type="text" data-bind="value: email")
-      label Telephone
-        input.telephone(type="text" data-bind="value: phone")
+      div.required
+        label.required Email address
+        input(type="text" data-bind="value: email")
+      div.required
+        label.required Telephone number
+        input(type="text" data-bind="value: phone")
     block
 
 block content
@@ -25,20 +27,21 @@ block content
       p.question Who are you?
       +contact(data-bind="with: d.applicant")
 
-      p.question What would you like to do?
-      div(data-bind="foreach: applicationTypeOptions")
-        label.mode.grid-row
-          input(type="radio" data-bind="value: id, checked: $root.d.applicationType")
-          div(data-bind="text: name")
+      div.required
+        p.question What would you like to do?
+        div(data-bind="foreach: applicationTypeOptions")
+          label.mode.grid-row
+            input(type="radio" data-bind="value: id, checked: $root.d.applicationType")
+            div(data-bind="text: name")
 
-      label.question(for="q3") How much money do you expect the program to require, in total?
-      select(data-bind="options: availableCostBands, optionsText: 'label', optionsValue: 'id', value: d.costBand")
+      div.required
+        label.question(for="q3") How much money do you expect the program to require, in total?
+        select(data-bind="options: availableCostBands, optionsText: 'label', optionsValue: 'id', value: d.costBand")
 
       //- ew!
       div(data-bind="visible: !!_assessmentLevel()")
-        p(data-bind="visible: _assessmentLevel() == 3") This application will be reviewed by the BEIS Portfolio team and the GDS, and signed off by the Cabinet Office. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital, technical and commercial standards.
-        p(data-bind="visible: _assessmentLevel() == 2") This application will be reviewed by the BEIS Portfolio team, and signed off by the GDS. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital and technical standards.
-        p(data-bind="visible: _assessmentLevel() == 1") This application will be reviewed and signed off by the BEIS Portfolio team. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital standards.
+        p This application will be reviewed by the BEIS Portfolio team. They will help you liaise with the GDS if appropriate. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital and technical standards.
+        p(data-bind="visible: _assessmentLevel() == 3") Due to the cost of this project, you will also have to verify that you meet the Cabinet Office's commercial standards. The Cabinet Office may get involved in the review.
 
         p.lede Your application progress will be stored throughout - you can return to this webiste at any point to complete your application.
         
@@ -50,15 +53,18 @@ block content
     fieldset.page#general(data-bind="visible: d.page() == 2")
     
       div(data-bind="visible: _askAboutProjectPhase")
-        label.question Choose your project
-        select(data-bind="options: existingProjects, optionsText: 'name', optionsValue: 'id', value: d.existingId")
-        label.question Which project phase are you seeking approval for?
-        select(data-bind="options: digitalProjectPhases, optionsText: 'name', optionsValue: 'id', value: d.phase")
+        div.required
+          label.question Choose your project
+          select(data-bind="options: existingProjects, optionsText: 'name', optionsValue: 'id', value: d.existingId")
+        div.required
+          label.question Which project phase are you seeking approval for?
+          select(data-bind="options: digitalProjectPhases, optionsText: 'name', optionsValue: 'id', value: d.phase")
       
         
       div(data-bind="visible: d.applicationType()==1")
-        label.question(for="q2") What is the name of the new program?
-        input(name="q2" type="text" data-bind="value: d.name")
+        div.required
+          label.question(for="q2") What is the name of the new program?
+          input(name="q2" type="text" data-bind="value: d.name")
         
         label.question(for="q3") Which ministerial or legislative mandates, if any, are set against this program?
         textarea(name="q3" data-bind="value: d.mandates")
@@ -66,10 +72,11 @@ block content
         label.question Who is the Senior Responsible Officer (SRO) of this program?
         +contact()(data-bind="with: d.sro")
 
-        label.question Which directorate does this program belong to?
-        select(data-bind="options: directorates, optionsText: 'name', optionsValue: 'id', value: d.directorate")
+        div.required
+          label.question Which directorate does this program belong to?
+          select(data-bind="options: directorates, optionsText: 'name', optionsValue: 'id', value: d.directorate")
         
-      div(data-bind="visible: _askAboutTech")
+      div.required(data-bind="visible: _askAboutTech")
         label.question What technology, new or existing, are you proposing to use?  
         textarea(data-bind="value: d.technology")
 
@@ -83,26 +90,26 @@ block content
             div.td
           div.tbody(data-bind="foreach: d.usecases")
             div.tr
-              div.td.input
+              div.td.input.required
                 input(type="text" data-bind="value: user")
               div.td.input
                 label
                   input(type="checkbox" data-bind="checked: direct")
                   span Direct user
-              div.td.input
+              div.td.input.required
                 textarea(data-bind="value: usecase")
               div.td
                 a(href="#" data-bind="click: $root.removeUsecase") Remove
         div(data-bind="visible: d.usecases().length == 0") No usecases specified
         button(data-bind="click: addUsecase") Add a usecase
-        div(data-bind="visible: d.usecases().length > 0")
+        div.required(data-bind="visible: d.usecases().length > 0")
           p.question What kind of research has been done to validate the above usecases?
           textarea(data-bind="value: d.usecaseEvidence")
 
       p.question Do you have a Business Case document for this application?
       select(data-bind="options: businessCases, optionsText: 'label', optionsValue: 'id', value: d.businessCase")
 
-      div(data-bind="visible: !!d.businessCase()")
+      div.required(data-bind="visible: !!d.businessCase()")
         p.question Please attach the Business Case document
         div.grid-row
           div
@@ -207,20 +214,22 @@ block content
       p.sub Please provide the details of all the procurements being run and the procurement routes.
       textarea(data-bind="value: d.purchasetech")
 
-      p.question Is this spend associated with a project/programme included on the Government Major Project Portfolio?
-      label.grid-row
-        input(type="radio", name="isMajorPortfolio", value="1", data-bind="checked: d.isMajorPortfolio")
-        div Yes   
-      label.grid-row
-        input(type="radio", name="isMajorPortfolio", value="0", data-bind="checked: d.isMajorPortfolio")
-        div No
+      div.required
+        p.question Is this spend associated with a project/programme included on the Government Major Project Portfolio?
+        label.grid-row
+          input(type="radio", name="isMajorPortfolio", value="1", data-bind="checked: d.isMajorPortfolio")
+          div Yes   
+        label.grid-row
+          input(type="radio", name="isMajorPortfolio", value="0", data-bind="checked: d.isMajorPortfolio")
+          div No
       
       +navbuttons
 
     fieldset.page#websiteinfo(data-bind="visible: d.page() == 4")
-            
-      p.question What domain name (URL) do you propose using for the digital service?
-      input(type="text" data-bind="value: d.url")
+      
+      div.required      
+        p.question What domain name (URL) do you propose using for the digital service?
+        input(type="text" data-bind="value: d.url")
 
       p.question Which users of the digital service, if any, will need to be identified and/or authenticated by the service? 
       p.sub Please refer to the #[a(href="https://www.gov.uk/service-manual/identity-assurance") Service Manual guidance] to ensure that the proposed approach is compliant. If there has already been contact with the GDS Identity Assurance Programme (IDAP) team please give brief details.
@@ -230,17 +239,20 @@ block content
       p.sub The proposal needs to comply with the #[a(href="https://www.gov.uk/service-manual/assisted-digital/index.html") Assisted Digital Guidance] from the Service Manual. This may outline consideration on delivering the services through the Front Office Counter Services framework. Please ensure costs are covered in the high-level finances.
       textarea(data-bind="value: d.assistedOutline")
 
-      p.question Is this digital service going to be part of GOV.UK? 
-      label.grid-row
-        input(type="radio" name="newwebsite" value="0" data-bind="checked: d.govukexempt")
-        div Yes
-      label.grid-row
-        input(type="radio" name="newwebsite" value="1" data-bind="checked: d.govukexempt")
-        div No
+      div.required
+        p.question Is this digital service going to be part of GOV.UK? 
+        label.grid-row
+          input(type="radio" name="newwebsite" value="0" data-bind="checked: d.govukexempt")
+          div Yes
+        label.grid-row
+          input(type="radio" name="newwebsite" value="1" data-bind="checked: d.govukexempt")
+          div No
 
       div#website-nogovuk(data-bind="visible: d.govukexempt() == 1")
-        p.question Why is this site exempt from GOV.UK?
-        textarea(data-bind="value: d.noGovUkReason")
+        div.required
+          p.question Why is this site exempt from GOV.UK?
+          p.sub Please see the GDS #[a(href="https://www.gov.uk/government/publications/request-an-exemption-from-govuk/exemptions-guidance") Exemptions guidance] for accepted grounds for exemption.
+          textarea(data-bind="value: d.noGovUkReason")
 
         p Please add any supporting emails confirming the grounds of exemption
         div.grid-row
@@ -253,19 +265,12 @@ block content
       +navbuttons
 
     fieldset.page#submit(data-bind="visible: d.page() == 5")
-      label.question Once your application is submitted, the approval process takes #[span(data-bind="text: _daysForAssessment")] days to complete.
-      label.grid-row
-        input(type="radio" name="fasttrack" value="" data-bind="checked: d.needsFasttrack")
-        div That's ok
-      label.grid-row
-        input(type="radio" name="fasttrack" value="true" data-bind="checked: d.needsFasttrack")
-        div I need an answer sooner - there is a deadline
+      
+      label.question Please list any critical deadlines in the next six months 
+      p.sub Giving us critical dates and their reason will help us prevent delays in complex approval cases.
+      textarea(data-bind="value: d.deadlines")
 
-      div(data-bind="visible: d.needsFasttrack()")
-        label.question When do you need an answer by?
-        input(type="text" data-bind="value: d.fasttrackDeadline")
-        label.question What is the origin of this deadline?
-        textarea(data-bind="value: d.fasttrackReason")
+      p Once your application is submitted, we aim to come back to you with an answer within #[span(data-bind="text: _daysForAssessment")] days.
 
       button.primary(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit and launch self-assessment
 

@@ -9,7 +9,7 @@ button {
   line-height: 1.25;
   cursor: pointer;
   background-color: #C7C7C7;
-  padding: .526315em 1.5em .263157em;
+  padding: .526315em 1.2em .263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -67,6 +67,17 @@ button.primary:hover {
   line-height:1.25em;
   font-weight:bold;
   margin: 20px 0 10px;
+}
+
+.required .question::after, .required>label.required::after {
+  content: " *";
+  color: red;
+  font-weight:bold;
+}
+
+.invalid {
+  border: 1px solid red;
+  background-color: #ffeeee;
 }
 
 .lede {
@@ -166,7 +177,16 @@ label.red {background-color: #FAB1B3;}
 label.amber {background-color: #FAE7B1;}
 label.green {background-color: #B1FABA;}
 
-.selfassessmentwrapper {  
+div.red, div.amber, div.green {
+  padding-left: 1%; 
+  width: 95%;
+}
+
+div.red {border-left: solid 15px #FAB1B3;}
+div.amber {border-left: solid 15px #FAE7B1;}
+div.green {border-left: solid 15px #B1FABA;}
+
+#questioncards .selfassessmentwrapper {  
     animation: slide-in 0.4s forwards;
     -webkit-animation: slide-in 0.4s forwards;  
 }
