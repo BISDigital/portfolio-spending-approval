@@ -82,7 +82,7 @@
 
     that.d.directorate = ko.observable();
     that.d.sro = ko.observable(contactTemplate());
-    that.d.costBand = ko.observable(0);
+    that.d.costBand = ko.observable();
     that.d.technology = ko.observable("");
 
     that._selfAssessmentLink = ko.computed(function() {
@@ -199,6 +199,44 @@
     that.financialYears = ko.observableArray(financialYears);
     that.costTypes = ko.observableArray(costTypes);
     that.financingTypes = ko.observableArray(financingTypes);
+
+    //submit
+    that.submit = function() {
+      var data = that._state();
+
+      //roll up various complex fields
+      data.usecases = JSON.stringify(data.usecases);
+      data.finance = JSON.stringify({
+        costs: data.costs,
+        techCapCosts: data.techCapCosts,
+        financing: data.financing,
+        doNothing: data.doNothing
+      });
+
+      //deal with files
+      var files  = [];
+      var fdata = new FormData($('form')[0]);
+      var bcd = fdata.get('businesscasedocument');
+      if (!!bcd && !!bcd.name) files.push({name: 'businessCaseDocument', file: bcd});
+      var gef = fdata.get('govukexemptionfile');
+      if (!!gef && !!gef.name) files.push({name: 'govukexemptionfile', file: gef });
+
+      (function recursiveFileUpload() {
+        if (!files.length) {
+          $.post('/submitapplication', data, function(res) {
+            window.location = res.location;
+          });
+        } else {
+          var file = files.pop();
+          var x = new FormData();
+          x.append(file.name, file.file);
+          $.ajax({method: "POST", url: "/file", processData: false, contentType: false, data: x, success: function(res) {
+            data[res.name] = window.location.protocol + "//" + window.location.host + res.location;
+            recursiveFileUpload();
+          }})
+        }
+      })();
+    }
     
     //paging
 
@@ -211,8 +249,9 @@
         if (!checkAllVisibleValid()) {
           return;
         }
+        var type = that.d.applicationType();
         var target = that.d.page() + offset;
-        if (target == 4 && that.d.applicationType() >= 3) target += offset; //skip website questions for non-digital projects
+        if (target == 4 && (type === 3 || type === 4)) target += offset; //skip website questions for non-digital projects
         window.scrollTo(0,0);
         that.d.page(target);
       }

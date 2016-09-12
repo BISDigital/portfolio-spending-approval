@@ -113,7 +113,7 @@ block content
         p.question Please attach the Business Case document
         div.grid-row
           div
-            input(type="file" data-bind="value: d.businessCaseDocument")
+            input(type="file" name="businesscasedocument" data-bind="value: d.businessCaseDocument")
           div
             a(href="#" data-bind="visible: !!d.businessCaseDocument(), click: removeBusinessCaseDocument") Remove
 
@@ -257,7 +257,7 @@ block content
         p Please add any supporting emails confirming the grounds of exemption
         div.grid-row
           div
-            input(type="file" data-bind="value: d.govukexemptionfile")
+            input(type="file" name="govukexemptionfile" data-bind="value: d.govukexemptionfile")
           div
             a(href="#" data-bind="visible: !!d.govukexemptionfile(), click: removegovukexemptionfile") Remove
        
@@ -272,11 +272,11 @@ block content
 
       p Once your application is submitted, we aim to come back to you with an answer within #[span(data-bind="text: _daysForAssessment")] days.
 
-      button.primary(type="submit" data-bind="click: function() {window.location = _selfAssessmentLink()}")#submit Submit and launch self-assessment
+      button.primary(type="submit" data-bind="click:submit")#submit Submit and launch self-assessment
 
 
       +navbuttons
       
   pre(data-bind="text: ko.toJSON($data, null, 2)")
-  
+
   script(src="/javascripts/surveyviewmodel.js")
