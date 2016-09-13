@@ -41,7 +41,7 @@ block content
       //- ew!
       div(data-bind="visible: !!_assessmentLevel()")
         p This application will be reviewed by the BEIS Portfolio team. They will help you liaise with the GDS if appropriate. As part of this application, you will need to complete a self-assessment to verify that your project meets the Cabinet Office's digital and technical standards.
-        p(data-bind="visible: _assessmentLevel() == 3") Due to the cost of this project, you will also have to verify that you meet the Cabinet Office's commercial standards. The Cabinet Office may get involved in the review.
+        p(data-bind="visible: _assessmentLevel() == 2") Due to the cost of this project, you will also have to verify that you meet the Cabinet Office's commercial standards. The Cabinet Office may get involved in the review.
 
         p.lede Your application progress will be stored throughout - you can return to this webiste at any point to complete your application.
         
@@ -61,7 +61,7 @@ block content
           select(data-bind="options: digitalProjectPhases, optionsText: 'name', optionsValue: 'id', value: d.phase")
       
         
-      div(data-bind="visible: d.applicationType()==1")
+      div(data-bind="visible: d.applicationType()=='NewDigital'")
         div.required
           label.question(for="q2") What is the name of the new program?
           input(name="q2" type="text" data-bind="value: d.name")

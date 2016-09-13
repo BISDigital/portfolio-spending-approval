@@ -155,7 +155,13 @@ input[type='text'], select, textarea{
   padding:10px 2%; 
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-select {
+
+.grid-row input[type='text'], .grid-row select, .grid-row textarea {
+  width: 92%;
+  padding: 10px 4%;
+}
+
+select, .grid-row select {
   width:100%; /* Select elements don't have horizontal padding */
 }
 

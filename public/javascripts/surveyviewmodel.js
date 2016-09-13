@@ -15,41 +15,41 @@
     {id: 3, name: "Directorate 3"}
   ];
   var applicationTypeOptions = [
-    {id: 1, name: "Get approval for the Discovery phase of a new digital project"},
-    {id: 2, name: "Get approval for the next phase (alpha, beta, live) of an existing digital project"},
-    {id: 3, name: "Get approval for purchasing a service that could alternatively be provided by an Independent Shared Service Center"},
-    {id: 4, name: "Get approval for technology expenditure"}
+    {id: "NewDigital", name: "Get approval for the Discovery phase of a new digital project"},
+    {id: "ExistingDigital", name: "Get approval for the next phase (alpha, beta, live) of an existing digital project"},
+    {id: "ISSC", name: "Get approval for purchasing a service that could alternatively be provided by an Independent Shared Service Center"},
+    {id: "TechExpenditure", name: "Get approval for technology expenditure"}
   ];
 
   var existingProjects = [
     {id: null, name: "Please select..."},
-    {id: 1, name: "Project 1"},
-    {id: 2, name: "Project 2"},
-    {id: 3, name: "Project 3"}
+    {id: "TA-01-01", name: "Project 1"},
+    {id: "TA-02-02", name: "Project 2"},
+    {id: "TA-03-03", name: "Project 3"}
   ];
 
   var digitalProjectPhases = [
     {id: null, name: "Please select..."},
-    {id: 1, name: "We want to run a discovery project and build a prototype"},
-    {id: 2, name: "We have a prototype and want to develop an alpha"},
-    {id: 3, name: "We have an alpha and want to develop a beta"},
-    {id: 4, name: "We have a beta and want to go live"}
+    {id: "Discovery", name: "We want to run a discovery project and build a prototype"},
+    {id: "Alpha", name: "We have a prototype and want to develop an alpha"},
+    {id: "Beta", name: "We have an alpha and want to develop a beta"},
+    {id: "Live", name: "We have a beta and want to go live"}
   ];
 
   var businessCases = [
-    {id: 0, name: "", label: "No - We don't have a Business Case Document"},
-    {id: 1, name: "Strategic Outline Business Case (SOBC)", label: "Yes - We have a Strategic Outline Business Case (SOBC)"},
-    {id: 2, name: "Outline Business Case (OBC)", label: "Yes - We have an Outline Business Case (OBC)"},
-    {id: 3, name: "Full Business Case (FBV)", label: "Yes - We have been through a procurement; have a Full Business Case (FBC)"}
+    {id: null, name: "", label: "No - We don't have a Business Case Document"},
+    {id: "SOBC", name: "Strategic Outline Business Case (SOBC)", label: "Yes - We have a Strategic Outline Business Case (SOBC)"},
+    {id: "OBC", name: "Outline Business Case (OBC)", label: "Yes - We have an Outline Business Case (OBC)"},
+    {id: "FBC", name: "Full Business Case (FBC)", label: "Yes - We have been through a procurement; have a Full Business Case (FBC)"}
   ];
 
   var costBands = [
     {id: null, label: "Please select..."},
-    {id: 1, label: "£100k or less"},
-    {id: 2, label: "Between £100k and £1m"},
-    {id: 3, label: "Between £1m and £5"},
-    {id: 4, label: "Between £5m and £10m"},
-    {id: 5, label: "£10m or more"}
+    {id: "<100k", label: "£100k or less"},
+    {id: "<1m", label: "Between £100k and £1m"},
+    {id: "<5m", label: "Between £1m and £5"},
+    {id: "<10m", label: "Between £5m and £10m"},
+    {id: ">10m", label: "£10m or more"}
   ];
 
   var costTypes = [
@@ -120,20 +120,16 @@
     that._assessmentLevel = ko.computed(function() {
       var cost = that.d.costBand(), type = that.d.applicationType();
       if (!cost || !type) return 0;
-      if (cost == 5) return 3;
-      if (type == 4 && cost >= 4
-        || type == 3 && cost >= 3 
-        ||type == 2 && cost >= 2
-        ||type == 1) return 2;
+      if (cost == ">10m") return 2;
       return 1;
     });
 
     that._daysForAssessment = ko.computed(function() {
-      return that._assessmentLevel() == 3 ? 28 : 14;
+      return that._assessmentLevel() == 2 ? 28 : 14;
     })
 
     that._askAboutProjectPhase = ko.computed(function() {
-      return that.d.applicationType() == 2;
+      return that.d.applicationType() == "ExistingDigital";
     })
 
     that._askAboutTech = ko.computed(function() {
@@ -141,7 +137,7 @@
     })
 
     that._askAboutUseCase = ko.computed(function() {
-      return that.d.applicationType() > 1;
+      return that.d.applicationType() != "NewDigital";
     }) 
 
 		
@@ -282,7 +278,7 @@
         }
         var type = that.d.applicationType();
         var target = that.d.page() + offset;
-        if (target == 4 && (type === 3 || type === 4)) target += offset; //skip website questions for non-digital projects
+        if (target == 4 && (type == "ISSC" || type == "TechExpenditure")) target += offset; //skip website questions for non-digital projects
         window.scrollTo(0,0);
         that.d.page(target);
       }
