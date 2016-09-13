@@ -13,7 +13,12 @@ block content
         div(data-bind="if: !!answer()")
           p.question(data-bind="text:question")
           div(data-bind="attr: {class: answer}")
-            span(data-bind="text:$data[answer()]") 
+            span(data-bind="text:$data[answer()]")
+            // ko if: !!comment()
+            br
+            strong Comment:&ensp;
+            span(data-bind="text:comment")
+            // /ko 
             span &ensp;
             a(href="#" data-bind="click: $root.clearAnswer") Change
 
