@@ -25,13 +25,9 @@ router.get('/file/:guid', function(req,res,next) {
     res.end();
     return;
   }
-  console.log(file)
-  console.log("setting header");
   res.setHeader('Content-Type', 'application/octet-stream');
-  console.log("setting attachment");
   res.attachment(file.name);
-  console.log("streaming");
-
+  
   file.file.pipe(res);  
 });
 
@@ -39,8 +35,6 @@ router.get('/file/:guid', function(req,res,next) {
 
 /* Posts */
 router.post("/submitapplication", function(req,res,next) {
-  console.log("Files:")
-  console.log(req.body);
   airtableData.createRecordFromPost(req.body, function(record) {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({

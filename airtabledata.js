@@ -44,8 +44,6 @@ function postDataToAirtableData(body) {
   if (body['bcdUploaded']) res['Business Case Document'] = [{url: body['bcdUploaded']}];
   if (body['gueUploaded']) res['Evidence for GovUK Exemption'] = [{url: body['gueUploaded']}];
   
-  console.log("airtable data:")
-  console.log(res);
   return res;
 }
 
