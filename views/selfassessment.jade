@@ -24,28 +24,34 @@ block content
         button.primary(data-bind="click: function() {selfAssessmentIndex(0)}") Get started 
 
       div#questioncards(data-bind="foreach: selfAssessmentQuestions")
-        div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index()")
+        div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index() * 2")
           p.question.selfassessment
             span(data-bind="text:$index() + 1")
             span :&ensp;
             span(data-bind="text: question")
             
-          label.green.grid-row(data-bind="click: $root.gotoNextUnansweredQuestion")
+          label.green.grid-row(data-bind="click: $root.incrementSelfAssessment")
             input(type="radio" value="green" data-bind="attr: {name: id}, checked: answer")
             div
               strong GREEN:&ensp;
               span(data-bind="text: green")
-          label.amber.grid-row(data-bind="visible: hasamber, click: $root.gotoNextUnansweredQuestion")
+          label.amber.grid-row(data-bind="visible: hasamber, click: $root.incrementSelfAssessment")
             input(type="radio" value="amber" data-bind="attr: {name: id}, checked: answer")
             div
               strong AMBER:&ensp;
               span(data-bind="text: amber")
-          label.red.grid-row(data-bind="click: $root.gotoNextUnansweredQuestion")
+          label.red.grid-row(data-bind="click: $root.incrementSelfAssessment")
             input(type="radio" value="red" data-bind="attr: {name: id}, checked: answer")
             div
               strong RED:&ensp;
               span(data-bind="text: red")
-      div(data-bind="visible: selfAssessmentIndex() == selfAssessmentQuestions().length")
+        div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index() * 2 + 1")
+          p.question Any additional comments to your answer?
+          div(data-bind="attr: {class: answer}, text:$data[answer()]")
+          textarea(data-bind="value: comment")
+          button.primary(data-bind="click: $root.gotoNextUnansweredQuestion") Continue
+
+      div(data-bind="visible: selfAssessmentIndex() == 2 * selfAssessmentQuestions().length")
         p And you're done! Click the button below to submit your answers.
         button.primary(type="submit") Submit
       div.navbuttons(data-bind="visible: selfAssessmentIndex() >= 0")

@@ -14,7 +14,11 @@
           nextIndex = i;
           break;
         }
-      setTimeout(function() {that.selfAssessmentIndex(nextIndex);}, 200); 
+      that.selfAssessmentIndex(nextIndex*2);
+    }
+    that.incrementSelfAssessment = function() {
+      var next = that.selfAssessmentIndex() +1;
+      setTimeout(function() {that.selfAssessmentIndex(next);}, 200); 
       return true;
     }
     that.decrementSelfAssessment = function() {that.selfAssessmentIndex(that.selfAssessmentIndex() -1)}
@@ -64,7 +68,8 @@
           amber: sa[i][phasename+"_amber"],
           hasamber: sa[i][phasename+"_amber"] != "",
           red: sa[i][phasename+"_red"],
-          answer: ko.observable()          
+          answer: ko.observable(),
+          comment: ko.observable()        
         });
       }
       return r;
@@ -91,15 +96,16 @@
         if (!match) continue;
         console.log(match);
         match.answer(old.answers[i].a);
+        match.comment(old.answers[i].c);
       }
-      if (old.idx) that.selfAssessmentIndex(old.idx);
+      if (old.idx) that.selfAssessmentIndex(old.idx - old.idx%2);
     })();
 
     var storable = ko.computed(function() {
       var res = [];
       var qs = that.selfAssessmentQuestions();
       for (var i in qs) {
-        res.push({q: qs[i].id, a: qs[i].answer() });
+        res.push({q: qs[i].id, a: qs[i].answer(), c: qs[i].comment() });
       }
       res.idx = that.selfAssessmentIndex();
       return {idx: that.selfAssessmentIndex(), answers: res};
