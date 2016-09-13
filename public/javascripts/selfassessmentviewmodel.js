@@ -39,6 +39,7 @@
 
 		that.applicationType = ko.observable(parseInt(getParameterByName("type")) || 1);    
     that.phase = ko.observable(parseInt(getParameterByName("phase")) || 1);
+    that.project = ko.observable(parseInt(getParameterByName("proj")) || 0);
     
     //self assessment
     var allSelfAssessment = ko.observableArray(selfAssessment);
@@ -87,7 +88,12 @@
     (function restore() {
       var old = JSON.parse(Cookies.get('selfassessment') || "{}");
       var qs = that.selfAssessmentQuestions();
-      console.log(old.answers);
+      if(old && old.proj != that.project() || 
+         old && old.phase != that.phase() ||
+         old && old.type != that.applicationType()) {        
+        return;
+      }
+
       for (var i in old.answers) {
 
         var id = old.answers[i].q;
@@ -108,7 +114,13 @@
         res.push({q: qs[i].id, a: qs[i].answer(), c: qs[i].comment() });
       }
       res.idx = that.selfAssessmentIndex();
-      return {idx: that.selfAssessmentIndex(), answers: res};
+      return {
+        idx: that.selfAssessmentIndex(),
+        proj: that.project(),
+        phase: that.phase(),
+        type: that.applicationType(), 
+        answers: res
+      };
     });
     storable.subscribe(function(newVals) {
       Cookies.set('selfassessment', JSON.stringify(newVals));
