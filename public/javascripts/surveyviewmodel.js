@@ -77,8 +77,32 @@
     that.d.existingId = ko.observable(0);
 		that.d.phase = ko.observable();
     that.d.businessCase = ko.observable();
-    that.d.businessCaseDocument = ko.observable();
-    that.removeBusinessCaseDocument = function() {that.d.businessCaseDocument("");}
+
+    that.businessCaseDocument = ko.observable();
+    that.d.bcdUploaded = ko.observable();
+    that.d.bcdFilename = ko.observable();
+    that._bcdState = ko.computed(function() {
+      var uploaded = that.d.bcdUploaded();
+      var localFile = that.businessCaseDocument();
+      return uploaded ? 2 : localFile ? 1 : 0;
+    });
+    that.removeBusinessCaseDocument = function() {
+      that.businessCaseDocument("");
+      that.d.bcdUploaded("");
+    }
+    that.businessCaseDocument.subscribe(function(newVal) {
+      if (!newVal) {
+        return;
+      }
+      var x = new FormData();
+      x.append("txt", new FormData($('form')[0]).get('businesscasedocument'));
+      $.ajax({method: "POST", url: "/file", processData: false, contentType: false, data: x, success: function(res) {
+          that.d.bcdUploaded(window.location.protocol + "//" + window.location.host + res.location);
+          that.businessCaseDocument("");
+          that.d.bcdFilename(newVal);
+        }
+      });
+    });
 
     that.d.directorate = ko.observable();
     that.d.sro = ko.observable(contactTemplate());
@@ -156,8 +180,33 @@
     that.d.govukexempt = ko.observable();
 
     that.d.noGovUkReason = ko.observable();
-    that.d.govukexemptionfile = ko.observable();
-    that.removegovukexemptionfile = function() {that.d.govukexemptionfile("");}
+
+    that.govukexemptionfile = ko.observable();
+    that.d.gueUploaded = ko.observable();
+    that.d.gueFilename = ko.observable();
+    that._gueState = ko.computed(function() {
+      var uploaded = that.d.gueUploaded();
+      var localFile = that.govukexemptionfile();
+      return uploaded ? 2 : localFile ? 1 : 0;
+    });
+    that.removegovukexemptionfile = function() {
+      that.govukexemptionfile("");
+      that.d.gueUploaded("");
+    }
+    that.govukexemptionfile.subscribe(function(newVal) {
+      if (!newVal) {
+        return;
+      }
+      var x = new FormData();
+      x.append("txt", new FormData($('form')[0]).get('govukexemptionfile'));
+      $.ajax({method: "POST", url: "/file", processData: false, contentType: false, data: x, success: function(res) {
+          that.d.gueUploaded(window.location.protocol + "//" + window.location.host + res.location);
+          that.govukexemptionfile("");
+          that.d.gueFilename(newVal);
+        }
+      });
+    });
+
     that.d.url = ko.observable();
     that.d.assistedOutline = ko.observable();
     that.d.authentication = ko.observable();
@@ -213,29 +262,11 @@
         doNothing: data.doNothing
       });
 
-      //deal with files
-      var files  = [];
-      var fdata = new FormData($('form')[0]);
-      var bcd = fdata.get('businesscasedocument');
-      if (!!bcd && !!bcd.name) files.push({name: 'businessCaseDocument', file: bcd});
-      var gef = fdata.get('govukexemptionfile');
-      if (!!gef && !!gef.name) files.push({name: 'govukexemptionfile', file: gef });
+      $.post('/submitapplication', data, function(res) {
+        Cookies.set('application', '{}');
+        window.location = res.location;
+      });
 
-      (function recursiveFileUpload() {
-        if (!files.length) {
-          $.post('/submitapplication', data, function(res) {
-            window.location = res.location;
-          });
-        } else {
-          var file = files.pop();
-          var x = new FormData();
-          x.append(file.name, file.file);
-          $.ajax({method: "POST", url: "/file", processData: false, contentType: false, data: x, success: function(res) {
-            data[res.name] = window.location.protocol + "//" + window.location.host + res.location;
-            recursiveFileUpload();
-          }})
-        }
-      })();
     }
     
     //paging
@@ -377,7 +408,7 @@
   //validation 
   function checkAllVisibleValid() {
     var allOk = true;      
-    $(".required input[type='text']:visible, .required textarea:visible, .required select:visible").each(function(i, e) {
+    $(".required input[type='text']:visible, .required textarea:visible, .required select:visible, .required input[type='file']:visible").each(function(i, e) {
       if(!$(e).val()) {
         $(e).addClass("invalid");
         allOk = false;

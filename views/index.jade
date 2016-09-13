@@ -113,9 +113,11 @@ block content
         p.question Please attach the Business Case document
         div.grid-row
           div
-            input(type="file" name="businesscasedocument" data-bind="value: d.businessCaseDocument")
+            input(type="file" name="businesscasedocument" data-bind="visible: _bcdState() == 0, value: businessCaseDocument")
+            span(data-bind="visible: _bcdState() != 0, text: d.bcdFilename")
           div
-            a(href="#" data-bind="visible: !!d.businessCaseDocument(), click: removeBusinessCaseDocument") Remove
+            a(href="#" data-bind="visible: _bcdState() == 1, click: removeBusinessCaseDocument") Uploading&hellip; (click to cancel)
+            a(href="#" data-bind="visible: _bcdState() == 2, click: removeBusinessCaseDocument") Remove
 
       +navbuttons
 
@@ -257,9 +259,11 @@ block content
         p Please add any supporting emails confirming the grounds of exemption
         div.grid-row
           div
-            input(type="file" name="govukexemptionfile" data-bind="value: d.govukexemptionfile")
+            input(type="file" name="govukexemptionfile" data-bind="visible: _gueState() == 0, value: govukexemptionfile")
+            span(data-bind="visible: _gueState() != 0, text: d.gueFilename")
           div
-            a(href="#" data-bind="visible: !!d.govukexemptionfile(), click: removegovukexemptionfile") Remove
+            a(href="#" data-bind="visible: _gueState() == 1, click: removegovukexemptionfile") Uploading&hellip; (click to cancel)
+            a(href="#" data-bind="visible: _gueState() == 2, click: removegovukexemptionfile") Remove
        
 
       +navbuttons

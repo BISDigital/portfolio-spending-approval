@@ -13,6 +13,7 @@ var users = require('./routes/users');
 var app = express();
 
 app.locals.SELFASSESSMENT = fs.readFileSync('./digitalstandards.json', {encoding: 'utf-8'});
+app.locals.TEMPUPLOADS = {};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -18,6 +18,23 @@ router.get('/table', function(req,res,next) {
   res.render('table', {title: 'Table rendering experiment'});
 })
 
+router.get('/file/:guid', function(req,res,next) {
+  var file = req.app.locals.TEMPUPLOADS[req.params.guid];
+  if (!file) {
+    res.status(404);
+    res.end();
+    return;
+  }
+  console.log(file)
+  console.log("setting header");
+  res.setHeader('Content-Type', 'application/octet-stream');
+  console.log("setting attachment");
+  res.attachment(file.name);
+  console.log("streaming");
+
+  file.file.pipe(res);  
+});
+
 
 
 /* Posts */
@@ -33,9 +50,7 @@ router.post("/submitapplication", function(req,res,next) {
 })
 
 router.post('/file', function(req,res,next) {  
-  console.log("marco...")
   req.pipe(req.busboy);
-  console.log("polo...")
   req.busboy.on('file', function (fieldname, file, filename) {
       console.log("Uploading: " + filename); 
 
@@ -45,10 +60,24 @@ router.post('/file', function(req,res,next) {
           return v.toString(16);
       });
 
-      var directory = __dirname + '/../public/uploads/' + guid;
+      req.app.locals.TEMPUPLOADS[guid] = {
+        file: file,
+        name: filename
+      };
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({
+        location: '/file/'+guid,
+        name: filename
+      }));
+      setTimeout(function() {
+        delete req.app.locals.TEMPUPLOADS[guid];
+      }, 7*24*60*60*1000);
+
+      /*var directory = __dirname + '/../public/uploads/' + guid;
 
       fs.mkdirSync(directory)
       var fstream = fs.createWriteStream(directory + '/' + filename);
+
       file.pipe(fstream);
       fstream.on('close', function () {
           console.log("Done uploading " + filename)            
@@ -61,7 +90,7 @@ router.post('/file', function(req,res,next) {
             fs.unlinkSync(directory + '/' + filename); 
             fs.rmdirSync(directory);
           }, 60*60*1000);
-      });
+      });*/
       
   });
 });
