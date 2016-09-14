@@ -51,7 +51,7 @@ block content
               strong RED:&ensp;
               span(data-bind="text: red")
         div.selfassessmentwrapper(data-bind="visible: $root.selfAssessmentIndex() == $index() * 2 + 1")
-          p.question Any additional comments to your answer?
+          p.question.selfassessment Any additional comments to your answer?
           div(data-bind="attr: {class: answer}, text:$data[answer()]")
           textarea(data-bind="value: comment")
           button.primary(data-bind="click: $root.gotoNextUnansweredQuestion") Continue

@@ -283,4 +283,7 @@ block content
       
   pre(data-bind="text: ko.toJSON($data, null, 2)")
 
+  script.
+    window.VIEWDATA = !{JSON.stringify(viewdata)};
+
   script(src="/javascripts/surveyviewmodel.js")

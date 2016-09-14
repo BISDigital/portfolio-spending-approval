@@ -213,6 +213,14 @@ pre {
   display:none;
 }
 
+/*viewmode*/
+
+input:disabled, select:disabled, textarea:disabled {
+  background-color: #f7f7f7;
+  color: black;
+  border: none;
+}
+
 /*table stuff*/
 .table {display:table; width:100%; border-collapse:collapse;}
 .tbody {display:table-row-group;}

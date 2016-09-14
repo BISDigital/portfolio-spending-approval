@@ -142,7 +142,7 @@
 
 		
     that.d.usecases = ko.observableArray([]);
-    that.addUsecase = function() {that.d.usecases.push({user: ko.observable(""), direct: ko.observable(0), usecase: ko.observable("")})};
+    that.addUsecase = function(user, direct, usecase) {that.d.usecases.push({user: ko.observable(user || ""), direct: ko.observable(direct || 0), usecase: ko.observable(usecase || "")})};
     that.removeUsecase = function(x) {that.d.usecases.remove(x)};
 
     that.d.usecaseEvidence = ko.observable("");
@@ -288,9 +288,8 @@
     var arraysOfCostModels = ['costs', 'financing', 'techCapCosts'];
     var costModels = ['doNothing'];
     var people = ['applicant', 'sro'];
-    var restore = function() {
-      var old = JSON.parse(Cookies.get('application') || "{}");
-      console.log(old);
+    var usecases = ['usecases'];
+    var restore = function(old) {
       for (var x in old) {
         if (old[x] == null || old[x] == undefined || !that.d[x]) {
           continue;
@@ -306,12 +305,28 @@
           that.d[x]().name(old[x].name);
           that.d[x]().email(old[x].email);
           that.d[x]().phone(old[x].phone);          
+        } else if (usecases.indexOf(x) > -1) {
+          that.d.usecases.removeAll();
+          for (var i in old[x]) {
+            that.addUsecase(old[x][i].user, old[x][i].direct, old[x][i].usecase);
+          }
         } else {
           that.d[x](old[x]); 
         }
       }
     };
-    restore();
+
+    if (window.VIEWDATA) {
+      restore(window.VIEWDATA);
+      setTimeout(function() {
+        $('.page').show();
+        $('button, a').hide();
+        $('input, select, textarea, button').prop("disabled", true)
+      });
+    } else {
+      restore(JSON.parse(Cookies.get('application') || "{}"));
+    }
+    
 
     that.reset = function() {
       Cookies.set('application', '{}');
@@ -331,6 +346,10 @@
             res[x] = that.d[x].storable();
           } else if (people.indexOf(x) > -1) {
             res[x] = {name: that.d[x]().name(), email: that.d[x]().email(), phone: that.d[x]().phone()};
+          } else if (usecases.indexOf(x) > -1) {
+            res[x] = [];
+            var ucs = that.d[x]();
+            for (var i in ucs) res[x].push({user: ucs[i].user(), direct: ucs[i].direct(), usecase: ucs[i].usecase()});             
           }
           else {
             res[x] = that.d[x]();  

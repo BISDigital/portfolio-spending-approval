@@ -10,6 +10,12 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Spending Approval' });
 });
 
+router.get('/view/:id', function(req,res,next) {
+  var record = airtableData.getRecord(req.params.id, function (record) {
+    res.render('index', { title: 'View application', viewdata: record})
+  });
+})
+
 router.get('/selfassessment', function (req,res,next) {
   res.render('selfassessment', {title: 'Spending Approval self-assessment', selfassessment: req.app.locals.SELFASSESSMENT});
 });
