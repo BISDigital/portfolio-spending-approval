@@ -377,9 +377,9 @@
       return res;
     });
     that._state.subscribe(function save(state) {
-      if (!window.VIEWDATA)
+      if (!window.VIEWDATA) {
         Cookies.set('application', JSON.stringify(state));
-      }
+      }      
     })
 	}
 
