@@ -94,8 +94,10 @@ function submitDigitalSelfassessment(body, callback) {
       records.forEach(function (r) {allRec.push(r)});
       next();
     }, function(error) {
-      if (error) return callback();      
-      body['Application ID'] = [ allRec[0].id ];
+      body['Application ID'] = allRec[0] && allRec[0].id
+        ? [ allRec[0].id ]
+        : [];
+        
       delete body['Application Type'];
       airtableBase('Digital SA').create(body, function(err, record) {
         if (err) return callback();
