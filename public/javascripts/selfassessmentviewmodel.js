@@ -57,7 +57,7 @@
 
       var r = [];
       for (var i in sa) {
-        if (sa[i].least_phase > phase) continue;
+        if (sa[i].least_phase > that.phase()) continue;
         r.push({
           id: sa[i].id,
           question: sa[i].question,
