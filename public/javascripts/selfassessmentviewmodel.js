@@ -84,7 +84,7 @@
     that.submit = function() {
       var data = {
         "Application ID": that.project(),
-        "Phase": that._phasename() 
+        "Phase": _phasename() 
       }
 
       var qs = that.selfAssessmentQuestions();
