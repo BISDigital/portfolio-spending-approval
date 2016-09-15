@@ -49,6 +49,13 @@ router.post("/submitapplication", function(req,res,next) {
   });
 })
 
+router.post("/submitdigitalsa", function(req,res,next) {
+  airtableData.submitDigitalSelfassessment(req.body, function(record) {
+    console.log(record);
+    res.status(200);
+    res.end();
+  })
+})
 router.post('/file', function(req,res,next) {  
   req.pipe(req.busboy);
   req.busboy.on('file', function (fieldname, file, filename) {

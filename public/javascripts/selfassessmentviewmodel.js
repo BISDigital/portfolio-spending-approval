@@ -36,27 +36,23 @@
     }
 
     
-
-		that.applicationType = ko.observable(parseInt(getParameterByName("type")) || 1);    
-    that.phase = ko.observable(parseInt(getParameterByName("phase")) || 1);
+		that.phase = ko.observable(parseInt(getParameterByName("phase")) || 1);
     that.project = ko.observable(parseInt(getParameterByName("proj")) || 0);
     
+    var _phasename = ko.computed(function() {
+      var p = that.phase();
+      return phase == 1 ? "discovery"
+        : phase == 2 ? "alpha"
+        : phase == 3 ? "beta"
+        : phase == 4 ? "live" : null;
+    })
+
     //self assessment
     var allSelfAssessment = ko.observableArray(selfAssessment);
     that.selfAssessmentQuestions = ko.computed(function() {
       var sa = allSelfAssessment();
-      var type = that.applicationType();
-      var phase = type == 1 ? 1
-        : type == 2 ? (that.phase() || 1)
-        : type == 3 ? 4
-        : -1;
-
-      var phasename = 
-          phase == 1 ? "discovery"
-        : phase == 2 ? "alpha"
-        : phase == 3 ? "beta"
-        : phase == 4 ? "live" : null;
-
+      var phasename = _phasename();
+      
       if (!phasename) return [];
 
       var r = [];
@@ -84,13 +80,32 @@
       return res;
     });
 
+    //submit
+    that.submit = function() {
+      var data = {
+        "Application ID": that.project(),
+        "Phase": that._phasename() 
+      }
+
+      var qs = that.selfAssessmentQuestions();
+      for (var i in qs) {
+        if (!qs[i].answer) continue;
+        data[qs[i].id + " Answer"] = qs[i].answer();
+        data[qs[i].id + " Answer Text"] = qs[i][qs[i].answer()];
+        data[qs[i].id + " Comment"] = qs[i].comment();
+      }
+
+      $.post('/submitdigitalsa', data, function() {
+        //window.location = '/'; // TODO: nice thank you page
+      })
+    };
+
     //save and restore
     (function restore() {
       var old = JSON.parse(Cookies.get('selfassessment') || "{}");
       var qs = that.selfAssessmentQuestions();
       if(old && old.proj != that.project() || 
-         old && old.phase != that.phase() ||
-         old && old.type != that.applicationType()) {        
+         old && old.phase != that.phase()) {        
         return;
       }
 
@@ -118,7 +133,6 @@
         idx: that.selfAssessmentIndex(),
         proj: that.project(),
         phase: that.phase(),
-        type: that.applicationType(), 
         answers: res
       };
     });

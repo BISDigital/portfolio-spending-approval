@@ -80,14 +80,32 @@ function getRecord(id, callback) {
 function createRecordFromPost(body, callback) {
 
   var dataModel = postDataToAirtableData(body);
-  
   airtableBase('Applications').create(dataModel, function(err, record) {
-    if (err) throw err;
+    if (err) return callback();
     callback(record);
   });
 }
  
+function submitDigitalSelfassessment(body, callback) {
+  var allRec = [];
+  
+  airtableBase('Applications').select({maxRecords:1, filterByFormula: ""})
+    .eachPage(function (records, next) {
+      records.forEach(function (r) {allRec.push(r)});
+      next();
+    }, function(error) {
+      if (error) return callback();      
+      body['Application ID'] = [ allRec[0].id ];
+      delete body['Application Type'];
+      airtableBase('Digital SA').create(body, function(err, record) {
+        if (err) return callback();
+        callback(record);
+      });    
+    });
+}
+
 module.exports = {
   createRecordFromPost: createRecordFromPost,
-  getRecord: getRecord
+  getRecord: getRecord,
+  submitDigitalSelfassessment: submitDigitalSelfassessment
 };
