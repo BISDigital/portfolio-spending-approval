@@ -96,6 +96,7 @@
       }
 
       $.post('/submitdigitalsa', data, function() {
+        Cookies.set('selfassessment', "{}");
         window.location = '/thanks';
       })
     };
