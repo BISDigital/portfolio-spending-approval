@@ -40,7 +40,7 @@ router.get('/file/:guid/:secret', function(req,res,next) {
     res.end();
     return;
   }
-  
+
   var file = req.app.locals.TEMPUPLOADS[req.params.guid];
   if (!file) {
     res.status(404);
@@ -57,10 +57,22 @@ router.get('/file/:guid/:secret', function(req,res,next) {
 
 /* Posts */
 router.post("/submitapplication", function(req,res,next) {
+  var effectivePhase = 
+    req.body.applicationType == "TechExpenditure" ? -1
+    : req.body.applicationType == "ISSV" ? 4
+    : req.body.applicationType == "NewDigital" ? 1
+    : req.body.phase == "live" ? 4
+    : req.body.phase == "beta" ? 3
+    : req.body.phase == "alpha" ? 2
+    : req.body.phase == "discovery" ? 1
+    : -1;
+
   airtableData.createRecordFromPost(req.body, function(record) {
+    req.body.phase
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({
-      location: '/selfassessment?proj='+record.fields['Application ID']
+      location: '/selfassessment?proj='+record.fields['Application ID'] 
+        + "&phase=" + effectivePhase
     }));
   });
 })

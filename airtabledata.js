@@ -28,6 +28,7 @@ var map = {
   url: 'Proposed URL',
   authentication: 'Authentication Requirements',
   assistedOutline: 'Help for Assisted Digital Users',
+  govukexempt: 'Wants GovUK Expemption',
   noGovUkReason: "Request for GovUK Exemption",
   //govukexemptionfile: "Evidence for GovUK Exemption",
 
@@ -71,6 +72,14 @@ function getRecord(id, callback) {
       }
       o[ts[0]] = record.get(map[i]);
     }
+
+    res.usecases = JSON.parse(res.usecases);
+    var f = JSON.parse(res.finance);
+    res.costs = f.costs;
+    res.financing = f.financing;
+    res.techCapCosts = f.techCapCosts;
+    res.doNothing = f.doNothing;
+
     console.log("Retrieved record:")
     console.log(res);
     callback(res);
@@ -97,7 +106,7 @@ function submitDigitalSelfassessment(body, callback) {
       body['Application ID'] = allRec[0] && allRec[0].id
         ? [ allRec[0].id ]
         : [];
-        
+
       delete body['Application Type'];
       airtableBase('Digital SA').create(body, function(err, record) {
         if (err) return callback();

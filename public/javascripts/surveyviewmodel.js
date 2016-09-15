@@ -1,6 +1,16 @@
 (function($) {
   var contactTemplate = function() {return {name:ko.observable(""), email:ko.observable(""), phone: ko.observable("")}};
 
+
+/* Update these arrays to reflect domain changes - these are safe to change */
+
+  var existingProjects = [
+    {id: null, name: "Please select..."},
+    {id: "TA-01-01", name: "Project 1"},
+    {id: "TA-02-02", name: "Project 2"},
+    {id: "TA-03-03", name: "Project 3"}
+  ];
+
   var financialYears = [
     {yearId: "2016", yearLabel: "2016/2017"},
     {yearId: "2017", yearLabel: "2017/2018"},
@@ -14,19 +24,21 @@
     {id: 2, name: "Directorate 2"},
     {id: 3, name: "Directorate 3"}
   ];
-  var applicationTypeOptions = [
-    {id: "NewDigital", name: "Get approval for the Discovery phase of a new digital project"},
-    {id: "ExistingDigital", name: "Get approval for the next phase (alpha, beta, live) of an existing digital project"},
-    {id: "ISSC", name: "Get approval for purchasing a service that could alternatively be provided by an Independent Shared Service Center"},
-    {id: "TechExpenditure", name: "Get approval for technology expenditure"}
+
+  var costTypes = [
+    {id: 1, name: "Technology capital expenditure"},
+    {id: 2, name: "Technology operational expenditure"},
+    {id: 3, name: "Non-technology operational expenditure"},
+    {id: 4, name: "Transition or exit costs"}
   ];
 
-  var existingProjects = [
-    {id: null, name: "Please select..."},
-    {id: "TA-01-01", name: "Project 1"},
-    {id: "TA-02-02", name: "Project 2"},
-    {id: "TA-03-03", name: "Project 3"}
+  var financingTypes = [
+    {id: 1, name: "Preapproved"},
+    {id: 2, name: "Requested now"},
   ];
+
+
+/* Changing the arrays below has implications elsewhere in the code - only change if you fancy debugging the rest of the codebase */
 
   var digitalProjectPhases = [
     {id: null, name: "Please select..."},
@@ -52,18 +64,13 @@
     {id: ">10m", label: "£10m or more"}
   ];
 
-  var costTypes = [
-    {id: 1, name: "Technology capital expenditure"},
-    {id: 2, name: "Technology operational expenditure"},
-    {id: 3, name: "Non-technology operational expenditure"},
-    {id: 4, name: "Transition or exit costs"}
-  ];
 
-  var financingTypes = [
-    {id: 1, name: "Preapproved"},
-    {id: 2, name: "Requested now"},
+  var applicationTypeOptions = [
+    {id: "NewDigital", name: "Get approval for the Discovery phase of a new digital project"},
+    {id: "ExistingDigital", name: "Get approval for the next phase (alpha, beta, live) of an existing digital project"},
+    {id: "ISSV", name: "Get approval for purchasing a service that could alternatively be provided by an Independent Shared Service Center"},
+    {id: "TechExpenditure", name: "Get approval for technology expenditure"}
   ];
-
 
 	var SurveyModel = function() {
 		var that = this;
@@ -142,7 +149,9 @@
 
 		
     that.d.usecases = ko.observableArray([]);
-    that.addUsecase = function(user, direct, usecase) {that.d.usecases.push({user: ko.observable(user || ""), direct: ko.observable(direct || 0), usecase: ko.observable(usecase || "")})};
+
+    var makeNewUsecase = function(user, direct, usecase) { return {user: ko.observable(user || ""), direct: ko.observable(direct || 0), usecase: ko.observable(usecase || "")};}; 
+    that.addUsecase = function() {that.d.usecases.push(makeNewUsecase())};
     that.removeUsecase = function(x) {that.d.usecases.remove(x)};
 
     that.d.usecaseEvidence = ko.observable("");
@@ -278,7 +287,7 @@
         }
         var type = that.d.applicationType();
         var target = that.d.page() + offset;
-        if (target == 4 && (type == "ISSC" || type == "TechExpenditure")) target += offset; //skip website questions for non-digital projects
+        if (target == 4 && (type == "ISSV" || type == "TechExpenditure")) target += offset; //skip website questions for non-digital projects
         window.scrollTo(0,0);
         that.d.page(target);
       }
@@ -295,9 +304,17 @@
           continue;
         }
         if (arraysOfCostModels.indexOf(x) > -1) {
+          var costArray = $.isFunction(that.d[x]) ? that.d[x]() : that.d[x];
           for (var y in old[x]) {
-            if (!(that.d[x][y])) continue;
-            that.d[x][y].set(old[x][y])
+            if (!(costArray[y])) {
+              var cm = new CostModel();
+              cm.set(old[x][y]);
+              if (old[x][y].name) cm.name = ko.observable(old[x][y].name);
+              that.d[x].push(cm)
+            } else {
+              costArray[y].set(old[x][y])
+              if (old[x][y].name) costArray[y].name = ko.observable(old[x][y].name);
+            }
           }
         } else if (costModels.indexOf(x) > -1) {
           that.d[x].set(old[x]); 
@@ -308,7 +325,7 @@
         } else if (usecases.indexOf(x) > -1) {
           that.d.usecases.removeAll();
           for (var i in old[x]) {
-            that.addUsecase(old[x][i].user, old[x][i].direct, old[x][i].usecase);
+            that.d.usecases.push(makeNewUsecase(old[x][i].user, old[x][i].direct, old[x][i].usecase));
           }
         } else {
           that.d[x](old[x]); 
@@ -338,9 +355,11 @@
       for (var x in that.d) {
           if (arraysOfCostModels.indexOf(x) > -1) {
             res[x] = {};
-            for(var y in that.d[x]) {
-              if (!(that.d[x][y] instanceof CostModel)) continue;
-              res[x][y] = that.d[x][y].storable();
+            var costArray = $.isFunction(that.d[x]) ? that.d[x]() : that.d[x];
+            for(var y in costArray) {
+              if (!(costArray[y] instanceof CostModel)) continue;
+              res[x][y] = costArray[y].storable();
+              if (costArray[y].name) res[x][y].name = costArray[y].name();
             }
           } else if (costModels.indexOf(x) > -1) {
             res[x] = that.d[x].storable();
