@@ -40,7 +40,7 @@
     that.project = ko.observable(parseInt(getParameterByName("proj")) || 0);
     
     var _phasename = ko.computed(function() {
-      var p = that.phase();
+      var phase = that.phase();
       return phase == 1 ? "discovery"
         : phase == 2 ? "alpha"
         : phase == 3 ? "beta"
