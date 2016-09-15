@@ -15,6 +15,8 @@ var app = express();
 app.locals.SELFASSESSMENT = fs.readFileSync('./digitalstandards.json', {encoding: 'utf-8'});
 app.locals.TEMPUPLOADS = {};
 
+app.locals.MAGICALSECRET = process.env.MAGICALSECRET || "magicalsecret";
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

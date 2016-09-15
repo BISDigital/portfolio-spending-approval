@@ -14,7 +14,13 @@ router.get('/thanks', function(req,res,next) {
   res.render('thanks', {title: "Thanks"});
 });
 
-router.get('/view/:id', function(req,res,next) {
+router.get('/view/:id/:secret', function(req,res,next) {
+  if (req.params.secret != req.app.locals.MAGICALSECRET) {
+    res.status(401);
+    res.end();
+    return;
+  }
+
   var record = airtableData.getRecord(req.params.id, function (record) {
     res.render('index', { title: 'View application', viewdata: record})
   });
@@ -28,7 +34,13 @@ router.get('/table', function(req,res,next) {
   res.render('table', {title: 'Table rendering experiment'});
 })
 
-router.get('/file/:guid', function(req,res,next) {
+router.get('/file/:guid/:secret', function(req,res,next) {
+  if (req.params.secret != req.app.locals.MAGICALSECRET) {
+    res.status(401);
+    res.end();
+    return;
+  }
+  
   var file = req.app.locals.TEMPUPLOADS[req.params.guid];
   if (!file) {
     res.status(404);

@@ -34,15 +34,15 @@ var map = {
   deadlines: 'Deadlines'
 };
 
-function postDataToAirtableData(body) {
+function postDataToAirtableData(body, secret) {
   var res = {}
   for (var i in map) {
     if (!body[i]) continue;
     res[map[i]] = body[i]
   }
 
-  if (body['bcdUploaded']) res['Business Case Document'] = [{url: body['bcdUploaded']}];
-  if (body['gueUploaded']) res['Evidence for GovUK Exemption'] = [{url: body['gueUploaded']}];
+  if (body['bcdUploaded']) res['Business Case Document'] = [{url: body['bcdUploaded'] + "/" + secret}];
+  if (body['gueUploaded']) res['Evidence for GovUK Exemption'] = [{url: body['gueUploaded'] + "/" + secret}];
   
   return res;
 }
