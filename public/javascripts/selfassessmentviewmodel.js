@@ -96,7 +96,7 @@
       }
 
       $.post('/submitdigitalsa', data, function() {
-        //window.location = '/'; // TODO: nice thank you page
+        window.location = '/thanks';
       })
     };
 

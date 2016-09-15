@@ -10,6 +10,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Spending Approval' });
 });
 
+router.get('/thanks', function(req,res,next) {
+  res.render('thanks', {title: "Thanks"});
+});
+
 router.get('/view/:id', function(req,res,next) {
   var record = airtableData.getRecord(req.params.id, function (record) {
     res.render('index', { title: 'View application', viewdata: record})
