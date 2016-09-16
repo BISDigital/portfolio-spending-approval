@@ -151,14 +151,14 @@ input[type='radio'], input[type='checkbox'] {
 }
 
 input[type='text'], select, textarea{
-  width: 95%;
+  width: 96%;
   padding:10px 2%; 
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-.grid-row input[type='text'], .grid-row select, .grid-row textarea {
+.grid-row .half input[type='text'], .grid-row .half select, .grid-row .half textarea {
   width: 92%;
-  padding: 10px 10px;
+  padding: 10px 4%;
 }
 
 select, .grid-row select {
