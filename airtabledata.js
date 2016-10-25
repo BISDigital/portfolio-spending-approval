@@ -108,7 +108,11 @@ function submitDigitalSelfassessment(body, callback) {
         : [];
 
       delete body['Application Type'];
-      airtableBase('Digital SA').create(body, function(err, record) {
+
+      var tablename = body['CookieName'] === "selfassessment" ? 'Digital SA' : 'Technical SA';
+      delete body['CookieName'];
+
+      airtableBase(tablename).create(body, function(err, record) {
         if (err) return callback();
         callback(record);
       });    

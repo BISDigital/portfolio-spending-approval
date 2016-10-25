@@ -1,6 +1,7 @@
 (function($) {
 
   var selfAssessment = window.selfassessment.Compiled;
+  var cookiename = window.cookiename;
 
 	var SelfAssessmentModel = function() {
 		var that = this;
@@ -84,7 +85,8 @@
     that.submit = function() {
       var data = {
         "Application ID": that.project(),
-        "Phase": _phasename() 
+        "Phase": _phasename(),
+        "CookieName": cookiename
       }
 
       var qs = that.selfAssessmentQuestions();
@@ -96,14 +98,14 @@
       }
 
       $.post('/submitdigitalsa', data, function() {
-        Cookies.set('selfassessment', "{}");
+        Cookies.set(cookiename, "{}");
         window.location = '/thanks';
       })
     };
 
     //save and restore
     (function restore() {
-      var old = JSON.parse(Cookies.get('selfassessment') || "{}");
+      var old = JSON.parse(Cookies.get(cookiename) || "{}");
       var qs = that.selfAssessmentQuestions();
       if(old && old.proj != that.project() || 
          old && old.phase != that.phase()) {        
@@ -138,11 +140,11 @@
       };
     });
     storable.subscribe(function(newVals) {
-      Cookies.set('selfassessment', JSON.stringify(newVals));
+      Cookies.set(cookiename, JSON.stringify(newVals));
     })
 
     that.reset = function() {
-      Cookies.set('selfassessment', "{}");
+      Cookies.set(cookiename, "{}");
       window.location = window.location;
     }
 

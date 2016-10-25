@@ -27,7 +27,11 @@ router.get('/view/:id/:secret', function(req,res,next) {
 })
 
 router.get('/selfassessment', function (req,res,next) {
-  res.render('selfassessment', {title: 'Spending Approval self-assessment', selfassessment: req.app.locals.SELFASSESSMENT});
+  res.render('selfassessment', {title: 'Spending Approval self-assessment', selfassessment: req.app.locals.SELFASSESSMENT, cookie: 'digitalselfassesssment'});
+});
+
+router.get('/techassessment', function(req,res,next) {
+  res.render('selfassessment', {title: 'Spending Approval self-assessment', selfassessment: req.app.locals.TECHSELFASSESSMENT, cookie: 'techselfassessment'})
 });
 
 router.get('/table', function(req,res,next) {

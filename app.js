@@ -13,6 +13,7 @@ var users = require('./routes/users');
 var app = express();
 
 app.locals.SELFASSESSMENT = fs.readFileSync('./digitalstandards.json', {encoding: 'utf-8'});
+app.locals.TECHSELFASSESSMENT = fs.readFileSync('./technologystandards.json', {encoding: 'utf-8'});
 app.locals.TEMPUPLOADS = {};
 
 app.locals.MAGICALSECRET = process.env.MAGICALSECRET || "magicalsecret";
