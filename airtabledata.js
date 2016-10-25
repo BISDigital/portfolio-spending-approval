@@ -98,7 +98,13 @@ function createRecordFromPost(body, callback) {
 function submitDigitalSelfassessment(body, callback) {
   var allRec = [];
   
-  airtableBase('Applications').select({maxRecords:1, filterByFormula: ""})
+  if (!body['Application ID']) {
+        throw "Application ID required"
+  }
+  
+  var filterFormula = "{Application ID} = " + body['Application ID']; 
+
+  airtableBase('Applications').select({maxRecords:1, filterByFormula: filterFormula})
     .eachPage(function (records, next) {
       records.forEach(function (r) {allRec.push(r)});
       next();
